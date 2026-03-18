@@ -20,12 +20,22 @@ import {
   ThumbsUp,
   Globe,
   ArrowLeft,
+  Music,
+  Video,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
 // ═══════════════════════════════════════════════════════════
-type NetworkKey = "instagram" | "facebook" | "x" | "linkedin";
+type NetworkKey = "instagram" | "facebook" | "x" | "linkedin" | "tiktok";
 
 interface NetworkConfig {
   key: NetworkKey;
@@ -106,6 +116,32 @@ function LiIcon(active: boolean) {
   );
 }
 
+function TkIcon(active: boolean) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <rect x="2" y="2" width="20" height="20" rx="4" fill={active ? "rgba(255,255,255,0.25)" : "#010101"} />
+      <path
+        d="M16.5 8.5C15.3 8.5 14.2 7.9 13.5 7V13.5C13.5 15.7 11.7 17.5 9.5 17.5C7.3 17.5 5.5 15.7 5.5 13.5C5.5 11.3 7.3 9.5 9.5 9.5C9.7 9.5 9.9 9.5 10 9.5V11.5C9.9 11.5 9.7 11.4 9.5 11.4C8.3 11.4 7.4 12.4 7.4 13.5C7.4 14.7 8.4 15.6 9.5 15.6C10.7 15.6 11.7 14.7 11.7 13.5V5.5H13.5C13.5 5.5 13.5 5.8 13.6 6.2C13.8 7 14.5 7.7 15.3 8C15.7 8.1 16.1 8.2 16.5 8.2V8.5Z"
+        fill="white"
+      />
+      <path
+        d="M16.5 8.2C15.3 8.2 14.2 7.6 13.5 6.7V13.2C13.5 15.4 11.7 17.2 9.5 17.2C7.3 17.2 5.5 15.4 5.5 13.2C5.5 11 7.3 9.2 9.5 9.2"
+        stroke="#25F4EE"
+        strokeWidth="0.3"
+        fill="none"
+        opacity="0.6"
+      />
+      <path
+        d="M16.8 8.8C15.6 8.8 14.5 8.2 13.8 7.3V13.8C13.8 16 12 17.8 9.8 17.8C7.6 17.8 5.8 16 5.8 13.8C5.8 11.6 7.6 9.8 9.8 9.8"
+        stroke="#FE2C55"
+        strokeWidth="0.3"
+        fill="none"
+        opacity="0.6"
+      />
+    </svg>
+  );
+}
+
 // ═══════════════════════════════════════════════════════════
 // NETWORK CONFIG
 // ═══════════════════════════════════════════════════════════
@@ -121,6 +157,7 @@ const NETWORKS: NetworkConfig[] = [
   { key: "facebook", label: "Facebook", color: "#1877F2", maxChars: 63206, icon: FbIcon },
   { key: "x", label: "X", color: "#000000", maxChars: 280, icon: XIconSvg },
   { key: "linkedin", label: "LinkedIn", color: "#0A66C2", maxChars: 3000, icon: LiIcon },
+  { key: "tiktok", label: "TikTok", color: "#010101", maxChars: 2200, icon: TkIcon },
 ];
 
 // ═══════════════════════════════════════════════════════════
@@ -195,7 +232,7 @@ function NetworkSelector({ selected, onChange }: { selected: NetworkKey; onChang
 
 // ═══════════════════════════════════════════════════════════
 // IPHONE SHELL (shared wrapper)
-// ═════════════════════════════���═════════════════════════════
+// ═══════════════════════════════════════════════════════════
 function IPhoneShell({ children, bgColor = "white" }: { children: React.ReactNode; bgColor?: string }) {
   return (
     <div className="relative" style={{ width: 290 }}>
@@ -576,62 +613,17 @@ function FacebookPreview({ postText, uploadedFile }: { postText: string; uploade
           </svg>
         </div>
         {[
-          <svg
-            key="fr"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#65676B"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          >
-            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+          <svg key="fr" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#65676B" strokeWidth="1.8" strokeLinecap="round">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
           </svg>,
-          <svg
-            key="tv"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#65676B"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="2" y="3" width="20" height="14" rx="2" />
-            <path d="M8 21h8M12 17v4" />
+          <svg key="tv" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#65676B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" /><path d="M8 21h8M12 17v4" />
           </svg>,
-          <svg
-            key="mk"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#65676B"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-            <path d="M3 6h18" />
-            <path d="M16 10a4 4 0 01-8 0" />
+          <svg key="mk" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#65676B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 01-8 0" />
           </svg>,
-          <svg
-            key="bell"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#65676B"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" />
+          <svg key="bell" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#65676B" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
           </svg>,
         ].map((icon, i) => (
           <div key={i} className="flex-1 flex justify-center py-2 border-b-[2.5px] border-transparent">
@@ -658,22 +650,12 @@ function FacebookPreview({ postText, uploadedFile }: { postText: string; uploade
                 </span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" fill="#1877F2" />
-                  <path
-                    d="M8 12.5L10.5 15L16 9.5"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                  <path d="M8 12.5L10.5 15L16 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
               <div className="flex items-center gap-1 mt-0.5">
-                <span className="text-[#65676B]" style={{ fontSize: "0.65rem" }}>
-                  Sponsorisé
-                </span>
-                <span className="text-[#65676B]" style={{ fontSize: "0.55rem" }}>
-                  ·
-                </span>
+                <span className="text-[#65676B]" style={{ fontSize: "0.65rem" }}>Sponsorisé</span>
+                <span className="text-[#65676B]" style={{ fontSize: "0.55rem" }}>·</span>
                 <Globe className="w-[10px] h-[10px] text-[#65676B]" strokeWidth={2} />
               </div>
             </div>
@@ -681,14 +663,10 @@ function FacebookPreview({ postText, uploadedFile }: { postText: string; uploade
           </div>
           <div className="px-3 pb-2.5">
             <p className="text-[#050505]" style={{ fontSize: "0.76rem", lineHeight: "1.45" }}>
-              {postText.length > 0
-                ? postText.slice(0, 160) + (postText.length > 160 ? "..." : "")
-                : "Votre texte apparaîtra ici..."}
+              {postText.length > 0 ? postText.slice(0, 160) + (postText.length > 160 ? "..." : "") : "Votre texte apparaîtra ici..."}
             </p>
             {postText.length > 160 && (
-              <span className="text-[#65676B] mt-0.5 inline-block" style={{ fontSize: "0.7rem", fontWeight: 500 }}>
-                Voir plus
-              </span>
+              <span className="text-[#65676B] mt-0.5 inline-block" style={{ fontSize: "0.7rem", fontWeight: 500 }}>Voir plus</span>
             )}
           </div>
           <MediaPlaceholder uploadedFile={uploadedFile} aspect="4/3" bgColor="#e4e6eb" />
@@ -698,37 +676,23 @@ function FacebookPreview({ postText, uploadedFile }: { postText: string; uploade
                 <FbLikeReaction />
                 <FbHeartReaction />
               </div>
-              <span className="text-[#65676B] ml-1" style={{ fontSize: "0.7rem" }}>
-                Sophie M. et 247 autres
-              </span>
+              <span className="text-[#65676B] ml-1" style={{ fontSize: "0.7rem" }}>Sophie M. et 247 autres</span>
             </div>
             <div className="flex items-center gap-2.5">
-              <span className="text-[#65676B]" style={{ fontSize: "0.66rem" }}>
-                18 comm.
-              </span>
-              <span className="text-[#65676B]" style={{ fontSize: "0.66rem" }}>
-                12 part.
-              </span>
+              <span className="text-[#65676B]" style={{ fontSize: "0.66rem" }}>18 comm.</span>
+              <span className="text-[#65676B]" style={{ fontSize: "0.66rem" }}>12 part.</span>
             </div>
           </div>
           <div className="mx-3 border-t border-[#e4e6eb]" />
           <div className="px-1.5 py-0.5 flex items-center justify-around">
             {[
               { icon: <ThumbsUp className="w-4 h-4 text-[#65676B]" strokeWidth={1.6} />, label: "J'aime" },
-              {
-                icon: <MessageCircle className="w-4 h-4 text-[#65676B] -scale-x-100" strokeWidth={1.6} />,
-                label: "Commenter",
-              },
+              { icon: <MessageCircle className="w-4 h-4 text-[#65676B] -scale-x-100" strokeWidth={1.6} />, label: "Commenter" },
               { icon: <Share2 className="w-4 h-4 text-[#65676B]" strokeWidth={1.6} />, label: "Partager" },
             ].map(({ icon, label }) => (
-              <button
-                key={label}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-[#f0f2f5] transition-colors cursor-pointer"
-              >
+              <button key={label} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-[#f0f2f5] transition-colors cursor-pointer">
                 {icon}
-                <span className="text-[#65676B]" style={{ fontSize: "0.72rem", fontWeight: 600 }}>
-                  {label}
-                </span>
+                <span className="text-[#65676B]" style={{ fontSize: "0.72rem", fontWeight: 600 }}>{label}</span>
               </button>
             ))}
           </div>
@@ -748,9 +712,7 @@ function XPreview({ postText, uploadedFile }: { postText: string; uploadedFile: 
       {/* X Nav Bar */}
       <div className="flex items-center justify-between px-4 pt-1.5 pb-2 mt-1 border-b border-[#eff3f4]">
         <ArrowLeft className="w-[18px] h-[18px] text-[#0f1419]" strokeWidth={2} />
-        <span className="text-[#0f1419]" style={{ fontSize: "0.82rem", fontWeight: 700 }}>
-          Post
-        </span>
+        <span className="text-[#0f1419]" style={{ fontSize: "0.82rem", fontWeight: 700 }}>Post</span>
         <div className="w-[18px]" />
       </div>
 
@@ -765,26 +727,15 @@ function XPreview({ postText, uploadedFile }: { postText: string; uploadedFile: 
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
-                <span className="text-[#0f1419] truncate" style={{ fontSize: "0.8rem", fontWeight: 700 }}>
-                  GreenLife Bio
-                </span>
+                <span className="text-[#0f1419] truncate" style={{ fontSize: "0.8rem", fontWeight: 700 }}>GreenLife Bio</span>
                 <svg width="14" height="14" viewBox="0 0 22 22" fill="none" className="shrink-0">
-                  <path
-                    d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.855-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.69-.13.637-.08 1.296.144 1.9-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.9.13.635.433 1.22.878 1.69.47.443 1.055.747 1.69.878.635.132 1.294.084 1.902-.14.272.587.702 1.086 1.24 1.44.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246-5.683 6.206z"
-                    fill="#1d9bf0"
-                  />
+                  <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.855-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.69-.13.637-.08 1.296.144 1.9-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.9.13.635.433 1.22.878 1.69.47.443 1.055.747 1.69.878.635.132 1.294.084 1.902-.14.272.587.702 1.086 1.24 1.44.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246-5.683 6.206z" fill="#1d9bf0" />
                 </svg>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>
-                  @greenlife_bio
-                </span>
-                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>
-                  ·
-                </span>
-                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>
-                  2h
-                </span>
+                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>@greenlife_bio</span>
+                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>·</span>
+                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>2h</span>
               </div>
             </div>
             <MoreHorizontal className="w-4 h-4 text-[#536471] shrink-0 mt-1" />
@@ -798,127 +749,40 @@ function XPreview({ postText, uploadedFile }: { postText: string; uploadedFile: 
             <MediaPlaceholder uploadedFile={uploadedFile} aspect="16/9" bgColor="#f7f9f9" />
           </div>
           <div className="flex items-center gap-1.5 mt-3 pb-2.5 border-b border-[#eff3f4]">
-            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>
-              10:00 AM
-            </span>
-            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>
-              ·
-            </span>
-            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>
-              15 mars 2026
-            </span>
-            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>
-              ·
-            </span>
-            <span className="text-[#0f1419]" style={{ fontSize: "0.68rem", fontWeight: 700 }}>
-              12,4k
-            </span>
-            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>
-              vues
-            </span>
+            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>10:00 AM</span>
+            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>·</span>
+            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>15 mars 2026</span>
+            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>·</span>
+            <span className="text-[#0f1419]" style={{ fontSize: "0.68rem", fontWeight: 700 }}>12,4k</span>
+            <span className="text-[#536471]" style={{ fontSize: "0.68rem" }}>vues</span>
           </div>
           <div className="flex items-center gap-4 py-2.5 border-b border-[#eff3f4]">
             {[
-              { n: "38", l: "Reposts" },
-              { n: "7", l: "Citations" },
-              { n: "248", l: "J'aime" },
-              { n: "12", l: "Signets" },
+              { n: "42", l: "Reposts" },
+              { n: "18", l: "Citations" },
+              { n: "1 248", l: "J'aime" },
+              { n: "3", l: "Signets" },
             ].map(({ n, l }) => (
               <div key={l} className="flex items-center gap-1">
-                <span className="text-[#0f1419]" style={{ fontSize: "0.72rem", fontWeight: 700 }}>
-                  {n}
-                </span>
-                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>
-                  {l}
-                </span>
+                <span className="text-[#0f1419]" style={{ fontSize: "0.72rem", fontWeight: 700 }}>{n}</span>
+                <span className="text-[#536471]" style={{ fontSize: "0.72rem" }}>{l}</span>
               </div>
             ))}
           </div>
-          <div className="flex items-center justify-around py-2.5 border-b border-[#eff3f4]">
+          <div className="flex items-center justify-around py-1.5 border-b border-[#eff3f4]">
             {[
-              <svg
-                key="c"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#536471"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+              <svg key="c" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
               </svg>,
-              <svg
-                key="r"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#536471"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M17 1l4 4-4 4" />
-                <path d="M3 11V9a4 4 0 014-4h14" />
-                <path d="M7 23l-4-4 4-4" />
-                <path d="M21 13v2a4 4 0 01-4 4H3" />
+              <svg key="r" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 014-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 01-4 4H3" />
               </svg>,
-              <svg
-                key="h"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#536471"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+              <Heart className="w-[18px] h-[18px] text-[#536471]" strokeWidth={1.6} />,
+              <svg key="ch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" /><polyline points="16 6 12 2 8 6" /><line x1="12" y1="2" x2="12" y2="15" />
               </svg>,
-              <svg
-                key="v"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#536471"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>,
-              <svg
-                key="b"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#536471"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+              <svg key="bk" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
-              </svg>,
-              <svg
-                key="s"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#536471"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8" />
-                <polyline points="16 6 12 2 8 6" />
-                <line x1="12" y1="2" x2="12" y2="15" />
               </svg>,
             ].map((icon, i) => (
               <button key={i} className="p-1.5 rounded-full hover:bg-[#1d9bf0]/10 transition-colors cursor-pointer">
@@ -935,46 +799,14 @@ function XPreview({ postText, uploadedFile }: { postText: string; uploadedFile: 
           <path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913h5.753a.93.93 0 00.929-.913v-7.075h3.818v7.075c0 .502.418.913.93.913h5.753a.93.93 0 00.929-.913V7.903c0-.3-.15-.584-.41-.757z" />
         </svg>
         <Search className="w-[21px] h-[21px] text-[#536471]" strokeWidth={1.8} />
-        <svg
-          width="21"
-          height="21"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#536471"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-          <path d="M19 10v2a7 7 0 01-14 0v-2" />
-          <line x1="12" y1="19" x2="12" y2="23" />
-          <line x1="8" y1="23" x2="16" y2="23" />
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" /><path d="M19 10v2a7 7 0 01-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" />
         </svg>
-        <svg
-          width="21"
-          height="21"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#536471"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-          <path d="M13.73 21a2 2 0 01-3.46 0" />
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" />
         </svg>
-        <svg
-          width="21"
-          height="21"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#536471"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-          <polyline points="22,6 12,13 2,6" />
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#536471" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22,6 12,13 2,6" />
         </svg>
       </div>
     </IPhoneShell>
@@ -988,10 +820,7 @@ function LiThumbReaction() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="11" fill="#378FE9" />
-      <path
-        d="M7 14.5V10H8.5L11 7V5.5C11 5 11.5 4.5 12 4.5C12.5 4.5 13 5 13 5.5V9H16.5C17.3 9 18 9.7 18 10.5L17 15C16.8 15.6 16.3 16 15.5 16H9.5C8.7 16 8 15.3 8 14.5H7Z"
-        fill="white"
-      />
+      <path d="M7 14.5V10H8.5L11 7V5.5C11 5 11.5 4.5 12 4.5C12.5 4.5 13 5 13 5.5V9H16.5C17.3 9 18 9.7 18 10.5L17 15C16.8 15.6 16.3 16 15.5 16H9.5C8.7 16 8 15.3 8 14.5H7Z" fill="white" />
     </svg>
   );
 }
@@ -999,10 +828,7 @@ function LiHeartReaction() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="11" fill="#E16745" />
-      <path
-        d="M12 17C12 17 6.5 13.5 6.5 10C6.5 8 8 6.5 9.75 6.5C10.7 6.5 11.5 7 12 7.7C12.5 7 13.3 6.5 14.25 6.5C16 6.5 17.5 8 17.5 10C17.5 13.5 12 17 12 17Z"
-        fill="white"
-      />
+      <path d="M12 17C12 17 6.5 13.5 6.5 10C6.5 8 8 6.5 9.75 6.5C10.7 6.5 11.5 7 12 7.7C12.5 7 13.3 6.5 14.25 6.5C16 6.5 17.5 8 17.5 10C17.5 13.5 12 17 12 17Z" fill="white" />
     </svg>
   );
 }
@@ -1010,10 +836,7 @@ function LiIdeaReaction() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="11" fill="#F5BB5C" />
-      <path
-        d="M12 5C9.2 5 7 7.2 7 10C7 11.8 7.9 13.4 9.3 14.3C9.7 14.6 10 15 10 15.5V16.5C10 17.3 10.7 18 11.5 18H12.5C13.3 18 14 17.3 14 16.5V15.5C14 15 14.3 14.6 14.7 14.3C16.1 13.4 17 11.8 17 10C17 7.2 14.8 5 12 5Z"
-        fill="white"
-      />
+      <path d="M12 5C9.2 5 7 7.2 7 10C7 11.8 7.9 13.4 9.3 14.3C9.7 14.6 10 15 10 15.5V16.5C10 17.3 10.7 18 11.5 18H12.5C13.3 18 14 17.3 14 16.5V15.5C14 15 14.3 14.6 14.7 14.3C16.1 13.4 17 11.8 17 10C17 7.2 14.8 5 12 5Z" fill="white" />
       <rect x="10" y="18.5" width="4" height="1" rx=".5" fill="white" />
     </svg>
   );
@@ -1033,16 +856,12 @@ function LinkedInPreview({ postText, uploadedFile }: { postText: string; uploade
           </div>
           <div className="flex-1 bg-[#edf3f8] rounded-[4px] px-2.5 py-[5px] flex items-center gap-1.5">
             <Search className="w-[13px] h-[13px] text-[#666]" strokeWidth={2.2} />
-            <span className="text-[#666]" style={{ fontSize: "0.68rem" }}>
-              Rechercher
-            </span>
+            <span className="text-[#666]" style={{ fontSize: "0.68rem" }}>Rechercher</span>
           </div>
           <div className="relative">
             <MessageCircle className="w-5 h-5 text-[#666]" strokeWidth={1.5} />
             <div className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#cc1016] rounded-full flex items-center justify-center border border-white">
-              <span className="text-white" style={{ fontSize: "0.42rem", fontWeight: 700 }}>
-                4
-              </span>
+              <span className="text-white" style={{ fontSize: "0.42rem", fontWeight: 700 }}>4</span>
             </div>
           </div>
         </div>
@@ -1060,23 +879,13 @@ function LinkedInPreview({ postText, uploadedFile }: { postText: string; uploade
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
-                <span className="text-[#191919] truncate" style={{ fontSize: "0.78rem", fontWeight: 600 }}>
-                  GreenLife Bio
-                </span>
-                <span className="text-[#666]" style={{ fontSize: "0.65rem" }}>
-                  · 1er
-                </span>
+                <span className="text-[#191919] truncate" style={{ fontSize: "0.78rem", fontWeight: 600 }}>GreenLife Bio</span>
+                <span className="text-[#666]" style={{ fontSize: "0.65rem" }}>· 1er</span>
               </div>
-              <p className="text-[#666] truncate" style={{ fontSize: "0.62rem", lineHeight: "1.3" }}>
-                Produits Bio de Qualité • 5 234 abonnés
-              </p>
+              <p className="text-[#666] truncate" style={{ fontSize: "0.62rem", lineHeight: "1.3" }}>Produits Bio de Qualité • 5 234 abonnés</p>
               <div className="flex items-center gap-1 mt-0.5">
-                <span className="text-[#666]" style={{ fontSize: "0.6rem" }}>
-                  Sponsorisé
-                </span>
-                <span className="text-[#666]" style={{ fontSize: "0.5rem" }}>
-                  •
-                </span>
+                <span className="text-[#666]" style={{ fontSize: "0.6rem" }}>Sponsorisé</span>
+                <span className="text-[#666]" style={{ fontSize: "0.5rem" }}>•</span>
                 <Globe className="w-[11px] h-[11px] text-[#666]" strokeWidth={2} />
               </div>
             </div>
@@ -1084,17 +893,10 @@ function LinkedInPreview({ postText, uploadedFile }: { postText: string; uploade
           </div>
           <div className="px-3 pt-1 pb-2">
             <p className="text-[#191919]" style={{ fontSize: "0.74rem", lineHeight: "1.45" }}>
-              {postText.length > 0
-                ? postText.slice(0, 140) + (postText.length > 140 ? "..." : "")
-                : "Votre texte apparaîtra ici..."}
+              {postText.length > 0 ? postText.slice(0, 140) + (postText.length > 140 ? "..." : "") : "Votre texte apparaîtra ici..."}
             </p>
             {postText.length > 140 && (
-              <span
-                className="text-[#666] mt-0.5 inline-block cursor-pointer"
-                style={{ fontSize: "0.68rem", fontWeight: 500 }}
-              >
-                ...voir plus
-              </span>
+              <span className="text-[#666] mt-0.5 inline-block cursor-pointer" style={{ fontSize: "0.68rem", fontWeight: 500 }}>...voir plus</span>
             )}
           </div>
           <MediaPlaceholder uploadedFile={uploadedFile} aspect="16/10" bgColor="#e9e5df" />
@@ -1105,13 +907,9 @@ function LinkedInPreview({ postText, uploadedFile }: { postText: string; uploade
                 <LiHeartReaction />
                 <LiIdeaReaction />
               </div>
-              <span className="text-[#666] ml-1.5" style={{ fontSize: "0.66rem" }}>
-                Sophie M. et 182 autres
-              </span>
+              <span className="text-[#666] ml-1.5" style={{ fontSize: "0.66rem" }}>Sophie M. et 182 autres</span>
             </div>
-            <span className="text-[#666]" style={{ fontSize: "0.64rem" }}>
-              24 commentaires
-            </span>
+            <span className="text-[#666]" style={{ fontSize: "0.64rem" }}>24 commentaires</span>
           </div>
           <div className="mx-3 border-t border-[#e0dfdc]" />
           <div className="px-1 py-0.5 flex items-center justify-around">
@@ -1120,34 +918,17 @@ function LinkedInPreview({ postText, uploadedFile }: { postText: string; uploade
               { icon: <MessageCircle className="w-4 h-4 text-[#666]" strokeWidth={1.5} />, label: "Commenter" },
               {
                 icon: (
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#666"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M17 1l4 4-4 4" />
-                    <path d="M3 11V9a4 4 0 014-4h14" />
-                    <path d="M7 23l-4-4 4-4" />
-                    <path d="M21 13v2a4 4 0 01-4 4H3" />
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 1l4 4-4 4" /><path d="M3 11V9a4 4 0 014-4h14" /><path d="M7 23l-4-4 4-4" /><path d="M21 13v2a4 4 0 01-4 4H3" />
                   </svg>
                 ),
                 label: "Republier",
               },
               { icon: <Send className="w-4 h-4 text-[#666]" strokeWidth={1.5} />, label: "Envoyer" },
             ].map(({ icon, label }) => (
-              <button
-                key={label}
-                className="flex-1 flex flex-col items-center gap-0.5 py-2 rounded-md hover:bg-[#f4f2ee] transition-colors cursor-pointer"
-              >
+              <button key={label} className="flex-1 flex flex-col items-center gap-0.5 py-2 rounded-md hover:bg-[#f4f2ee] transition-colors cursor-pointer">
                 {icon}
-                <span className="text-[#666]" style={{ fontSize: "0.6rem", fontWeight: 600 }}>
-                  {label}
-                </span>
+                <span className="text-[#666]" style={{ fontSize: "0.6rem", fontWeight: 600 }}>{label}</span>
               </button>
             ))}
           </div>
@@ -1161,75 +942,147 @@ function LinkedInPreview({ postText, uploadedFile }: { postText: string; uploade
           <svg width="19" height="19" viewBox="0 0 24 24" fill="#191919">
             <path d="M23 9v2h-2v7a3 3 0 01-3 3h-4v-6h-4v6H6a3 3 0 01-3-3v-7H1V9l11-7 5 3.18V2h3v5.09z" />
           </svg>
-          <span className="text-[#191919]" style={{ fontSize: "0.48rem", fontWeight: 700 }}>
-            Accueil
-          </span>
+          <span className="text-[#191919]" style={{ fontSize: "0.48rem", fontWeight: 700 }}>Accueil</span>
           <div className="w-4 h-[2px] rounded-full bg-[#191919] -mt-0.5" />
         </div>
         {[
-          {
-            icon: (
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#666"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-              >
-                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-              </svg>
-            ),
-            l: "Réseau",
-          },
+          { icon: <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.6" strokeLinecap="round"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" /></svg>, l: "Réseau" },
           { icon: <PlusSquare className="w-[19px] h-[19px] text-[#666]" strokeWidth={1.6} />, l: "Publier" },
-          {
-            icon: (
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#666"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 01-3.46 0" />
-              </svg>
-            ),
-            l: "Notif.",
-          },
-          {
-            icon: (
-              <svg
-                width="19"
-                height="19"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#666"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <rect x="2" y="7" width="20" height="14" rx="2" />
-                <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
-              </svg>
-            ),
-            l: "Emplois",
-          },
+          { icon: <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 01-3.46 0" /></svg>, l: "Notif." },
+          { icon: <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" /></svg>, l: "Emplois" },
         ].map(({ icon, l }) => (
           <div key={l} className="flex flex-col items-center gap-0.5">
             {icon}
-            <span className="text-[#666]" style={{ fontSize: "0.48rem" }}>
-              {l}
-            </span>
+            <span className="text-[#666]" style={{ fontSize: "0.48rem" }}>{l}</span>
           </div>
         ))}
+      </div>
+    </IPhoneShell>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// TIKTOK PREVIEW
+// ═══════════════════════════════════════════════════════════
+function TikTokPreview({ postText, uploadedFile }: { postText: string; uploadedFile: string | null }) {
+  return (
+    <IPhoneShell bgColor="#000">
+      {/* Full dark screen */}
+      <div className="flex-1 relative overflow-hidden bg-black">
+        {/* Video area */}
+        {uploadedFile ? (
+          <video src={uploadedFile} className="absolute inset-0 w-full h-full object-cover" muted loop />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+              <Video className="w-10 h-10 text-white/20" strokeWidth={1.2} />
+              <span className="text-white/30" style={{ fontSize: "0.7rem" }}>Aperçu vidéo</span>
+            </div>
+          </div>
+        )}
+
+        {/* Top bar */}
+        <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-center gap-5 pt-2 px-4">
+          <span className="text-white/50" style={{ fontSize: "0.78rem", fontWeight: 500 }}>Suivis</span>
+          <span className="text-white" style={{ fontSize: "0.78rem", fontWeight: 700 }}>Pour toi</span>
+          <div className="absolute right-4">
+            <Search className="w-[18px] h-[18px] text-white" strokeWidth={2} />
+          </div>
+        </div>
+
+        {/* Right side icons */}
+        <div className="absolute right-3 bottom-24 z-10 flex flex-col items-center gap-5">
+          {/* Profile */}
+          <div className="relative">
+            <div
+              className="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center"
+              style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)" }}
+            >
+              <Leaf className="w-4 h-4 text-white" />
+            </div>
+            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-[#FE2C55] flex items-center justify-center border-2 border-black">
+              <span className="text-white" style={{ fontSize: "0.5rem", fontWeight: 700 }}>+</span>
+            </div>
+          </div>
+          {/* Like */}
+          <div className="flex flex-col items-center gap-1">
+            <Heart className="w-7 h-7 text-white" strokeWidth={1.8} fill="white" />
+            <span className="text-white" style={{ fontSize: "0.6rem", fontWeight: 500 }}>24.5K</span>
+          </div>
+          {/* Comment */}
+          <div className="flex flex-col items-center gap-1">
+            <MessageCircle className="w-7 h-7 text-white" strokeWidth={1.8} />
+            <span className="text-white" style={{ fontSize: "0.6rem", fontWeight: 500 }}>892</span>
+          </div>
+          {/* Bookmark */}
+          <div className="flex flex-col items-center gap-1">
+            <Bookmark className="w-6 h-6 text-white" strokeWidth={1.8} />
+            <span className="text-white" style={{ fontSize: "0.6rem", fontWeight: 500 }}>1.2K</span>
+          </div>
+          {/* Share */}
+          <div className="flex flex-col items-center gap-1">
+            <Share2 className="w-6 h-6 text-white" strokeWidth={1.8} />
+            <span className="text-white" style={{ fontSize: "0.6rem", fontWeight: 500 }}>348</span>
+          </div>
+          {/* Spinning disc */}
+          <div className="w-9 h-9 rounded-full border-[3px] border-[#333] bg-gradient-to-br from-[#333] to-[#111] flex items-center justify-center animate-spin" style={{ animationDuration: "3s" }}>
+            <div className="w-3 h-3 rounded-full bg-white/30" />
+          </div>
+        </div>
+
+        {/* Bottom caption area */}
+        <div className="absolute bottom-4 left-0 right-14 z-10 px-3">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-white" style={{ fontSize: "0.82rem", fontWeight: 700 }}>@greenlifebio</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="10" fill="#20D5EC" />
+              <path d="M8 12.5L10.5 15L16 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <p className="text-white/90" style={{ fontSize: "0.72rem", lineHeight: "1.4" }}>
+            {postText.length > 0
+              ? postText.slice(0, 100) + (postText.length > 100 ? "..." : "")
+              : "Votre légende apparaîtra ici..."}
+          </p>
+          <div className="flex items-center gap-1.5 mt-2">
+            <Music className="w-3 h-3 text-white" strokeWidth={2} />
+            <div className="overflow-hidden max-w-[150px]">
+              <span className="text-white/80 whitespace-nowrap" style={{ fontSize: "0.65rem" }}>
+                🎵 Son original — greenlifebio
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Tab Bar */}
+      <div className="bg-black px-3 pt-2 pb-1 flex items-center justify-around">
+        <div className="flex flex-col items-center gap-0.5">
+          <Home className="w-5 h-5 text-white" strokeWidth={1.8} fill="white" />
+          <span className="text-white" style={{ fontSize: "0.48rem", fontWeight: 600 }}>Accueil</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5">
+          <Search className="w-5 h-5 text-white/50" strokeWidth={1.8} />
+          <span className="text-white/50" style={{ fontSize: "0.48rem" }}>Découvrir</span>
+        </div>
+        {/* Plus button */}
+        <div className="relative w-10 h-7">
+          <div className="absolute left-0 top-0 w-[34px] h-full rounded-lg bg-[#25F4EE]" />
+          <div className="absolute right-0 top-0 w-[34px] h-full rounded-lg bg-[#FE2C55]" />
+          <div className="absolute inset-0 mx-auto w-[34px] h-full rounded-lg bg-white flex items-center justify-center">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </div>
+        </div>
+        <div className="flex flex-col items-center gap-0.5">
+          <MessageCircle className="w-5 h-5 text-white/50" strokeWidth={1.8} />
+          <span className="text-white/50" style={{ fontSize: "0.48rem" }}>Boîte</span>
+        </div>
+        <div className="flex flex-col items-center gap-0.5">
+          <User className="w-5 h-5 text-white/50" strokeWidth={1.8} />
+          <span className="text-white/50" style={{ fontSize: "0.48rem" }}>Profil</span>
+        </div>
       </div>
     </IPhoneShell>
   );
@@ -1249,6 +1102,13 @@ export function CreationView() {
   const [scheduledTime, setScheduledTime] = useState("10:00");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // TikTok-specific state
+  const [tiktokPrivacy, setTiktokPrivacy] = useState("public");
+  const [tiktokComments, setTiktokComments] = useState(true);
+  const [tiktokDuet, setTiktokDuet] = useState(true);
+  const [tiktokStitch, setTiktokStitch] = useState(true);
+
+  const isTikTok = selectedNetwork === "tiktok";
   const currentNetwork = NETWORKS.find((n) => n.key === selectedNetwork)!;
   const charCount = postText.length;
 
@@ -1256,15 +1116,38 @@ export function CreationView() {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) setUploadedFile(URL.createObjectURL(file));
+    if (!file) return;
+    if (isTikTok) {
+      if (file.type === "video/mp4" || file.type === "video/webm") {
+        setUploadedFile(URL.createObjectURL(file));
+      }
+    } else {
+      if (file.type.startsWith("image/")) {
+        setUploadedFile(URL.createObjectURL(file));
+      }
+    }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith("image/")) setUploadedFile(URL.createObjectURL(file));
+    if (!file) return;
+    if (isTikTok) {
+      if (file.type === "video/mp4" || file.type === "video/webm") {
+        setUploadedFile(URL.createObjectURL(file));
+      }
+    } else {
+      if (file.type.startsWith("image/")) {
+        setUploadedFile(URL.createObjectURL(file));
+      }
+    }
   };
 
-  // Render the appropriate preview
+  // Reset uploaded file when switching networks
+  const handleNetworkChange = (n: NetworkKey) => {
+    setSelectedNetwork(n);
+    setUploadedFile(null);
+  };
+
   const renderPreview = () => {
     switch (selectedNetwork) {
       case "instagram":
@@ -1275,6 +1158,8 @@ export function CreationView() {
         return <XPreview postText={postText} uploadedFile={uploadedFile} />;
       case "linkedin":
         return <LinkedInPreview postText={postText} uploadedFile={uploadedFile} />;
+      case "tiktok":
+        return <TikTokPreview postText={postText} uploadedFile={uploadedFile} />;
     }
   };
 
@@ -1297,14 +1182,14 @@ export function CreationView() {
             <label className="text-gray-600 block mb-2.5" style={{ fontSize: "0.82rem", fontWeight: 600 }}>
               Réseau social
             </label>
-            <NetworkSelector selected={selectedNetwork} onChange={setSelectedNetwork} />
+            <NetworkSelector selected={selectedNetwork} onChange={handleNetworkChange} />
           </div>
 
           {/* Textarea */}
           <div>
             <div className="flex items-center justify-between mb-2.5">
               <label className="text-gray-600" style={{ fontSize: "0.82rem", fontWeight: 600 }}>
-                Contenu de la publication
+                {isTikTok ? "Légende de la vidéo" : "Contenu de la publication"}
               </label>
               <span
                 className={charCount > currentNetwork.maxChars ? "text-red-500" : "text-gray-300"}
@@ -1316,21 +1201,64 @@ export function CreationView() {
             <textarea
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
-              rows={6}
+              rows={isTikTok ? 4 : 6}
+              maxLength={currentNetwork.maxChars}
               className="w-full rounded-xl border border-gray-150 px-4 py-3 text-gray-700 placeholder-gray-250 resize-none focus:outline-none focus:border-[#1e3a5f]/30 focus:ring-2 focus:ring-[#1e3a5f]/10 transition-all"
               style={{ fontSize: "0.88rem", lineHeight: "1.65" }}
-              placeholder="Rédigez votre publication ici…"
+              placeholder={isTikTok ? "Ajoutez une légende à votre vidéo TikTok…" : "Rédigez votre publication ici…"}
             />
           </div>
+
+          {/* TikTok-specific settings */}
+          {isTikTok && (
+            <div className="rounded-xl border border-gray-100 bg-gray-50/50 p-4 flex flex-col gap-4">
+              <label className="text-gray-600" style={{ fontSize: "0.82rem", fontWeight: 600 }}>
+                Paramètres TikTok
+              </label>
+
+              {/* Privacy */}
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500" style={{ fontSize: "0.82rem" }}>Confidentialité</span>
+                <Select value={tiktokPrivacy} onValueChange={setTiktokPrivacy}>
+                  <SelectTrigger className="w-[160px] h-9 rounded-lg text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Public</SelectItem>
+                    <SelectItem value="friends">Amis</SelectItem>
+                    <SelectItem value="private">Privé</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Toggles */}
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500" style={{ fontSize: "0.82rem" }}>Autoriser les commentaires</span>
+                <Switch checked={tiktokComments} onCheckedChange={setTiktokComments} />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500" style={{ fontSize: "0.82rem" }}>Autoriser le Duo</span>
+                <Switch checked={tiktokDuet} onCheckedChange={setTiktokDuet} />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-500" style={{ fontSize: "0.82rem" }}>Autoriser le Collage (Stitch)</span>
+                <Switch checked={tiktokStitch} onCheckedChange={setTiktokStitch} />
+              </div>
+            </div>
+          )}
 
           {/* Upload */}
           <div>
             <label className="text-gray-600 block mb-2.5" style={{ fontSize: "0.82rem", fontWeight: 600 }}>
-              Média
+              {isTikTok ? "Vidéo" : "Média"}
             </label>
             {uploadedFile ? (
               <div className="relative rounded-xl overflow-hidden border border-gray-100">
-                <img src={uploadedFile} alt="Uploaded" className="w-full h-48 object-cover" />
+                {isTikTok ? (
+                  <video src={uploadedFile} className="w-full h-48 object-cover" controls />
+                ) : (
+                  <img src={uploadedFile} alt="Uploaded" className="w-full h-48 object-cover" />
+                )}
                 <button
                   onClick={() => setUploadedFile(null)}
                   className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70 transition-colors cursor-pointer"
@@ -1350,20 +1278,30 @@ export function CreationView() {
                 className={`flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed py-10 cursor-pointer transition-all ${isDragging ? "border-[#1e3a5f] bg-[#1e3a5f]/[0.03]" : "border-gray-200 hover:border-[#1e3a5f]/30 hover:bg-gray-50/50"}`}
               >
                 <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center">
-                  <Upload className="w-5 h-5 text-gray-300" strokeWidth={1.8} />
+                  {isTikTok ? (
+                    <Video className="w-5 h-5 text-gray-300" strokeWidth={1.8} />
+                  ) : (
+                    <Upload className="w-5 h-5 text-gray-300" strokeWidth={1.8} />
+                  )}
                 </div>
                 <div className="text-center">
                   <p className="text-gray-500" style={{ fontSize: "0.84rem", fontWeight: 500 }}>
-                    Glissez votre image ici ou{" "}
+                    {isTikTok ? "Glissez votre vidéo ici ou " : "Glissez votre image ici ou "}
                     <span className="text-[#1e3a5f]" style={{ fontWeight: 600 }}>
                       parcourir
                     </span>
                   </p>
                   <p className="text-gray-250 mt-1" style={{ fontSize: "0.72rem" }}>
-                    PNG, JPG ou WebP — max 10 Mo
+                    {isTikTok ? "MP4 ou WebM — max 500 Mo" : "PNG, JPG ou WebP — max 10 Mo"}
                   </p>
                 </div>
-                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={isTikTok ? "video/mp4,video/webm" : "image/*"}
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
               </div>
             )}
           </div>
