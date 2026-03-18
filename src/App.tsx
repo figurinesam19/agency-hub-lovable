@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Layout } from "./components/Layout";
-import CreationView from "./pages/CreationView";
+import { CreationView } from "./pages/CreationView";
 import SuiviEditorialView from "./pages/SuiviEditorialView";
 import CalendrierView from "./pages/CalendrierView";
 import AnalyticsView from "./pages/AnalyticsView";
