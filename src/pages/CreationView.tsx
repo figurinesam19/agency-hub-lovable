@@ -1431,3 +1431,267 @@ export function CreationView() {
     </div>
   );
 }
+import React, { useRef, useState, useEffect } from "react";
+
+interface Props {
+  onVideoSelect: (file: File, previewUrl: string, thumbnail: string) => void;
+}
+
+const MAX_SIZE = 500 * 1024 * 1024; // 500MB
+const MIN_DURATION = 3;
+const MAX_DURATION = 600; // 10min
+
+export const TikTokVideoUploader: React.FC<Props> = ({ onVideoSelect }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
+  const validateVideo = (file: File) => {
+    if (!["video/mp4", "video/quicktime"].includes(file.type)) {
+      return "Format invalide (.mp4 ou .mov uniquement)";
+    }
+    if (file.size > MAX_SIZE) {
+      return "Fichier trop volumineux (max 500MB)";
+    }
+    return null;
+  };
+
+  const generateThumbnail = (video: HTMLVideoElement) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL("image/png");
+  };
+
+  const handleFile = (file: File) => {
+    const validationError = validateVideo(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+
+    video.preload = "metadata";
+    video.src = url;
+
+    video.onloadedmetadata = () => {
+      if (video.duration < MIN_DURATION || video.duration > MAX_DURATION) {
+        setError("Durée invalide (entre 3s et 10min)");
+        return;
+      }
+
+      video.currentTime = 1;
+
+      video.onseeked = () => {
+        const thumb = generateThumbnail(video);
+        if (thumb) setThumbnail(thumb);
+
+        setPreview(url);
+        setError(null);
+
+        onVideoSelect(file, url, thumb || "");
+      };
+    };
+  };
+
+  return (
+    <div className="border border-dashed rounded-xl p-4 text-center">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="video/mp4,video/quicktime"
+        hidden
+        onChange={(e) => {
+          if (e.target.files?.[0]) handleFile(e.target.files[0]);
+        }}
+      />
+
+      {!preview && (
+        <button
+          onClick={() => inputRef.current?.click()}
+          className="px-4 py-2 bg-black text-white rounded-lg"
+        >
+          Upload vidéo TikTok
+        </button>
+      )}
+
+      {error && <p className="text-red-500 mt-2">{error}</p>}
+
+      {preview && (
+        <div className="mt-4">
+          <video src={preview} controls className="rounded-lg w-full" />
+          {thumbnail && (
+            <img
+              src={thumbnail}
+              alt="thumbnail"
+              className="mt-2 rounded-lg"
+            />
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+import React from "react";
+
+interface Props {
+  settings: {
+    privacy: "public" | "friends" | "private";
+    allowComments: boolean;
+    allowDuet: boolean;
+    allowStitch: boolean;
+  };
+  onChange: (newSettings: Props["settings"]) => void;
+}
+
+export const TikTokSettings: React.FC<Props> = ({ settings, onChange }) => {
+  const toggle = (key: keyof Props["settings"]) => {
+    onChange({ ...settings, [key]: !settings[key] });
+  };
+
+  return (
+    <div className="space-y-4 mt-4">
+      <div>
+        <label className="block mb-1">Confidentialité</label>
+        <select
+          value={settings.privacy}
+          onChange={(e) =>
+            onChange({ ...settings, privacy: e.target.value as any })
+          }
+          className="w-full border rounded-lg p-2"
+        >
+          <option value="public">Public</option>
+          <option value="friends">Amis</option>
+          <option value="private">Privé</option>
+        </select>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <span>Autoriser les commentaires</span>
+        <input
+          type="checkbox"
+          checked={settings.allowComments}
+          onChange={() => toggle("allowComments")}
+        />
+      </div>
+
+      <div className="flex justify-between items-center">
+        <span>Autoriser le Duo</span>
+        <input
+          type="checkbox"
+          checked={settings.allowDuet}
+          onChange={() => toggle("allowDuet")}
+        />
+      </div>
+
+      <div className="flex justify-between items-center">
+        <span>Autoriser le Stitch</span>
+        <input
+          type="checkbox"
+          checked={settings.allowStitch}
+          onChange={() => toggle("allowStitch")}
+        />
+      </div>
+    </div>
+  );
+};
+import React from "react";
+
+interface Props {
+  videoUrl: string | null;
+  caption: string;
+}
+
+export const TikTokPreview: React.FC<Props> = ({ videoUrl, caption }) => {
+  return (
+    <div className="w-[300px] h-[550px] bg-black rounded-3xl overflow-hidden relative">
+      {videoUrl && (
+        <video
+          src={videoUrl}
+          autoPlay
+          loop
+          muted
+          className="w-full h-full object-cover"
+        />
+      )}
+
+      {/* Caption */}
+      <div className="absolute bottom-4 left-4 right-4 text-white text-sm">
+        {caption}
+      </div>
+
+      {/* Fake icons */}
+      <div className="absolute right-2 bottom-20 flex flex-col gap-4 text-white text-center">
+        <div>❤️</div>
+        <div>💬</div>
+        <div>🔗</div>
+      </div>
+    </div>
+  );
+};
+const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+const [videoFile, setVideoFile] = useState<File | null>(null);
+const [videoUrl, setVideoUrl] = useState<string | null>(null);
+const [thumbnail, setThumbnail] = useState<string | null>(null);
+const [caption, setCaption] = useState("");
+
+const [tiktokSettings, setTiktokSettings] = useState({
+  privacy: "public",
+  allowComments: true,
+  allowDuet: true,
+  allowStitch: true,
+});
+const togglePlatform = (platform: string) => {
+  setSelectedPlatforms((prev) =>
+    prev.includes(platform)
+      ? prev.filter((p) => p !== platform)
+      : [...prev, platform]
+  );
+};
+
+const isTikTokSelected = selectedPlatforms.includes("tiktok");
+{isTikTokSelected && (
+  <div className="grid md:grid-cols-2 gap-6">
+    
+    {/* LEFT */}
+    <div className="space-y-4">
+      <TikTokVideoUploader
+        onVideoSelect={(file, url, thumb) => {
+          setVideoFile(file);
+          setVideoUrl(url);
+          setThumbnail(thumb);
+        }}
+      />
+
+      <textarea
+        value={caption}
+        onChange={(e) => {
+          if (e.target.value.length <= 2200) {
+            setCaption(e.target.value);
+          }
+        }}
+        placeholder="Écrire une légende..."
+        className="w-full border rounded-lg p-3"
+      />
+
+      <TikTokSettings
+        settings={tiktokSettings}
+        onChange={setTiktokSettings}
+      />
+    </div>
+
+    {/* RIGHT PREVIEW */}
+    <div className="flex justify-center">
+      <TikTokPreview videoUrl={videoUrl} caption={caption} />
+    </div>
+
+  </div>
+)}
