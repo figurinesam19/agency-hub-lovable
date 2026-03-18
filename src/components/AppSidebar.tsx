@@ -3,34 +3,34 @@ import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const socialMediaLinks = [
-  { title: "Création", path: "/creation", icon: Lightbulb },
-  { title: "Suivi Éditorial", path: "/suivi-editorial", icon: FileText },
-  { title: "Calendrier", path: "/calendrier", icon: CalendarDays },
-  { title: "Analytics", path: "/analytics", icon: BarChart3 },
-];
+{ title: "Création", path: "/creation", icon: Lightbulb },
+{ title: "Suivi Éditorial", path: "/suivi-editorial", icon: FileText },
+{ title: "Calendrier", path: "/calendrier", icon: CalendarDays },
+{ title: "Analytics", path: "/analytics", icon: BarChart3 }];
+
 
 const agenceLinks = [
-  { title: "Pipeline CRM", path: "/crm", icon: Users },
-  { title: "Abonnements", path: "/abonnements", icon: CreditCard },
-];
+{ title: "Pipeline CRM", path: "/crm", icon: Users },
+{ title: "Abonnements", path: "/abonnements", icon: CreditCard }];
 
-function SidebarLink({ to, icon: Icon, label }: { to: string; icon: React.ElementType; label: string }) {
+
+function SidebarLink({ to, icon: Icon, label }: {to: string;icon: React.ElementType;label: string;}) {
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
-        cn(
-          "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
-          isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
-            : "text-sidebar-foreground hover:bg-secondary"
-        )
-      }
-    >
+      cn(
+        "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors",
+        isActive ?
+        "bg-sidebar-accent text-sidebar-accent-foreground" :
+        "text-sidebar-foreground hover:bg-secondary"
+      )
+      }>
+      
       <Icon className="h-[18px] w-[18px]" />
       <span>{label}</span>
-    </NavLink>
-  );
+    </NavLink>);
+
 }
 
 export function AppSidebar() {
@@ -38,11 +38,12 @@ export function AppSidebar() {
     <aside className="w-[250px] min-w-[250px] h-screen bg-sidebar border-r border-sidebar-border flex flex-col">
       {/* Logo */}
       <div className="h-[70px] flex items-center gap-2.5 px-5 border-b border-sidebar-border">
-        <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full bg-sidebar-primary items-center justify-center flex flex-row">
           <span className="text-sidebar-primary-foreground text-xs font-bold">⚡</span>
         </div>
         <div>
-          <span className="text-foreground font-bold text-base leading-tight block">Pulsar</span>
+          <span className="text-foreground font-bold text-base leading-tight block">
+</span>
           <span className="text-sidebar-foreground text-[11px] uppercase tracking-wider">Agency</span>
         </div>
       </div>
@@ -54,9 +55,8 @@ export function AppSidebar() {
             Social Media
           </p>
           <div className="space-y-0.5">
-            {socialMediaLinks.map((link) => (
-              <SidebarLink key={link.path} to={link.path} icon={link.icon} label={link.title} />
-            ))}
+            {socialMediaLinks.map((link) => <SidebarLink key={link.path} to={link.path} icon={link.icon} label={link.title} />
+            )}
           </div>
         </div>
 
@@ -65,9 +65,9 @@ export function AppSidebar() {
             Agence
           </p>
           <div className="space-y-0.5">
-            {agenceLinks.map((link) => (
-              <SidebarLink key={link.path} to={link.path} icon={link.icon} label={link.title} />
-            ))}
+            {agenceLinks.map((link) =>
+            <SidebarLink key={link.path} to={link.path} icon={link.icon} label={link.title} />
+            )}
           </div>
         </div>
       </nav>
@@ -79,6 +79,6 @@ export function AppSidebar() {
           <span>Déconnexion</span>
         </button>
       </div>
-    </aside>
-  );
+    </aside>);
+
 }
