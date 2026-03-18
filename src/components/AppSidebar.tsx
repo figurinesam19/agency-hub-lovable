@@ -42,8 +42,7 @@ export function AppSidebar() {
           <span className="text-sidebar-primary-foreground text-xs font-bold">⚡</span>
         </div>
         <div>
-          <span className="text-foreground font-bold text-base leading-tight block">
-</span>
+          <span className="text-foreground font-bold text-base leading-tight block">Studio ASC</span>
           <span className="text-sidebar-foreground text-[11px] uppercase tracking-wider">Agency</span>
         </div>
       </div>
