@@ -21,11 +21,18 @@ interface CalendarEvent {
   status: "published" | "scheduled" | "draft";
 }
 
-const networkConfig: Record<Exclude<Network, "all">, { dot: string; label: string; icon: string }> = {
-  instagram: { dot: "bg-rose-500", label: "Instagram", icon: "IG" },
-  linkedin: { dot: "bg-blue-600", label: "LinkedIn", icon: "in" },
-  facebook: { dot: "bg-blue-500", label: "Facebook", icon: "f" },
-  tiktok: { dot: "bg-gray-900", label: "TikTok", icon: "TK" },
+const networkConfig: Record<Exclude<Network, "all">, { dot: string; label: string; icon: string; dropdownColor: string }> = {
+  instagram: { dot: "bg-rose-500", label: "Instagram", icon: "IG", dropdownColor: "text-rose-500" },
+  linkedin: { dot: "bg-blue-600", label: "LinkedIn", icon: "in", dropdownColor: "text-blue-700" },
+  facebook: { dot: "bg-blue-500", label: "Facebook", icon: "f", dropdownColor: "text-blue-500" },
+  tiktok: { dot: "bg-gray-900", label: "TikTok", icon: "TK", dropdownColor: "text-gray-900" },
+  x: { dot: "bg-gray-900", label: "X", icon: "X", dropdownColor: "text-gray-900" },
+};
+
+const statusConfig: Record<Exclude<Status, "all">, { label: string; color: string }> = {
+  published: { label: "Publié", color: "bg-emerald-400" },
+  scheduled: { label: "Programmé", color: "bg-amber-400" },
+  draft: { label: "Brouillon", color: "bg-gray-300" },
 };
 
 const statusColors: Record<string, string> = {
