@@ -117,8 +117,12 @@ const CalendrierView = () => {
   const cells = useMemo(() => getCalendarDays(year, month), [year, month]);
 
   const filteredEvents = useMemo(
-    () => mockEvents.filter((e) => e.month === month && e.year === year && (networkFilter === "all" || e.network === networkFilter)),
-    [month, year, networkFilter],
+    () => mockEvents.filter((e) =>
+      e.month === month && e.year === year &&
+      (networkFilter === "all" || e.network === networkFilter) &&
+      (statusFilter === "all" || e.status === statusFilter)
+    ),
+    [month, year, networkFilter, statusFilter],
   );
 
   const eventsByDay = useMemo(() => {
