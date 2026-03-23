@@ -112,6 +112,7 @@ const CalendrierView = () => {
   const [month, setMonth] = useState(3);
   const [year, setYear] = useState(2026);
   const [networkFilter, setNetworkFilter] = useState<Network>("all");
+  const [statusFilter, setStatusFilter] = useState<Status>("all");
 
   const cells = useMemo(() => getCalendarDays(year, month), [year, month]);
 
