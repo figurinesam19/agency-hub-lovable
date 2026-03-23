@@ -1,8 +1,15 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
-type Network = "all" | "instagram" | "linkedin" | "facebook" | "tiktok";
+type Network = "all" | "instagram" | "linkedin" | "facebook" | "tiktok" | "x";
+type Status = "all" | "published" | "scheduled" | "draft";
 
 interface CalendarEvent {
   id: number;
