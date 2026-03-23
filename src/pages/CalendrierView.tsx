@@ -152,19 +152,58 @@ const CalendrierView = () => {
           <p className="text-sm text-muted-foreground">Organisez et planifiez vos publications</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center bg-card border border-border rounded-lg overflow-hidden">
-            {filters.map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setNetworkFilter(f.key)}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  networkFilter === f.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+          {/* Network dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 font-medium">
+                Réseau : {networkFilter === "all" ? "Tous" : networkConfig[networkFilter].label}
+                <ChevronRight className="h-3.5 w-3.5 rotate-90 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52">
+              {networkOptions.map((opt) => (
+                <DropdownMenuItem
+                  key={opt.key}
+                  onClick={() => setNetworkFilter(opt.key)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  {opt.key !== "all" && (
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${networkConfig[opt.key].dot} text-white shrink-0`}>
+                      {networkConfig[opt.key].icon}
+                    </span>
+                  )}
+                  <span className="flex-1">{opt.label}</span>
+                  {networkFilter === opt.key && <Check className="h-4 w-4 text-primary" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Status dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 font-medium">
+                Statut : {statusFilter === "all" ? "Tous" : statusConfig[statusFilter].label}
+                <ChevronRight className="h-3.5 w-3.5 rotate-90 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              {statusOptions.map((opt) => (
+                <DropdownMenuItem
+                  key={opt.key}
+                  onClick={() => setStatusFilter(opt.key)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  {opt.key !== "all" && (
+                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${statusConfig[opt.key].color}`} />
+                  )}
+                  <span className="flex-1">{opt.label}</span>
+                  {statusFilter === opt.key && <Check className="h-4 w-4 text-primary" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
             <Plus className="h-4 w-4" />
             Nouveau Post
