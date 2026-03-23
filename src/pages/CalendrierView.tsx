@@ -1,8 +1,15 @@
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
-type Network = "all" | "instagram" | "linkedin" | "facebook" | "tiktok";
+type Network = "all" | "instagram" | "linkedin" | "facebook" | "tiktok" | "x";
+type Status = "all" | "published" | "scheduled" | "draft";
 
 interface CalendarEvent {
   id: number;
@@ -14,11 +21,18 @@ interface CalendarEvent {
   status: "published" | "scheduled" | "draft";
 }
 
-const networkConfig: Record<Exclude<Network, "all">, { dot: string; label: string; icon: string }> = {
-  instagram: { dot: "bg-rose-500", label: "Instagram", icon: "IG" },
-  linkedin: { dot: "bg-blue-600", label: "LinkedIn", icon: "in" },
-  facebook: { dot: "bg-blue-500", label: "Facebook", icon: "f" },
-  tiktok: { dot: "bg-gray-900", label: "TikTok", icon: "TK" },
+const networkConfig: Record<Exclude<Network, "all">, { dot: string; label: string; icon: string; dropdownColor: string }> = {
+  instagram: { dot: "bg-rose-500", label: "Instagram", icon: "IG", dropdownColor: "text-rose-500" },
+  linkedin: { dot: "bg-blue-600", label: "LinkedIn", icon: "in", dropdownColor: "text-blue-700" },
+  facebook: { dot: "bg-blue-500", label: "Facebook", icon: "f", dropdownColor: "text-blue-500" },
+  tiktok: { dot: "bg-gray-900", label: "TikTok", icon: "TK", dropdownColor: "text-gray-900" },
+  x: { dot: "bg-gray-900", label: "X", icon: "X", dropdownColor: "text-gray-900" },
+};
+
+const statusConfig: Record<Exclude<Status, "all">, { label: string; color: string }> = {
+  published: { label: "Publié", color: "bg-emerald-400" },
+  scheduled: { label: "Programmé", color: "bg-amber-400" },
+  draft: { label: "Brouillon", color: "bg-gray-300" },
 };
 
 const statusColors: Record<string, string> = {
@@ -76,11 +90,20 @@ function getCalendarDays(year: number, month: number) {
   return cells;
 }
 
-const filters: { key: Network; label: string }[] = [
+const networkOptions: { key: Network; label: string }[] = [
   { key: "all", label: "Tous" },
   { key: "instagram", label: "Instagram" },
-  { key: "linkedin", label: "LinkedIn" },
   { key: "facebook", label: "Facebook" },
+  { key: "x", label: "X" },
+  { key: "linkedin", label: "LinkedIn" },
+  { key: "tiktok", label: "TikTok" },
+];
+
+const statusOptions: { key: Status; label: string }[] = [
+  { key: "all", label: "Tous" },
+  { key: "published", label: "Publié" },
+  { key: "scheduled", label: "Programmé" },
+  { key: "draft", label: "Brouillon" },
 ];
 
 const MAX_VISIBLE = 2;
@@ -89,12 +112,17 @@ const CalendrierView = () => {
   const [month, setMonth] = useState(3);
   const [year, setYear] = useState(2026);
   const [networkFilter, setNetworkFilter] = useState<Network>("all");
+  const [statusFilter, setStatusFilter] = useState<Status>("all");
 
   const cells = useMemo(() => getCalendarDays(year, month), [year, month]);
 
   const filteredEvents = useMemo(
-    () => mockEvents.filter((e) => e.month === month && e.year === year && (networkFilter === "all" || e.network === networkFilter)),
-    [month, year, networkFilter],
+    () => mockEvents.filter((e) =>
+      e.month === month && e.year === year &&
+      (networkFilter === "all" || e.network === networkFilter) &&
+      (statusFilter === "all" || e.status === statusFilter)
+    ),
+    [month, year, networkFilter, statusFilter],
   );
 
   const eventsByDay = useMemo(() => {
@@ -124,19 +152,58 @@ const CalendrierView = () => {
           <p className="text-sm text-muted-foreground">Organisez et planifiez vos publications</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex items-center bg-card border border-border rounded-lg overflow-hidden">
-            {filters.map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setNetworkFilter(f.key)}
-                className={`px-4 py-2 text-sm font-medium transition-colors ${
-                  networkFilter === f.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
+          {/* Network dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 font-medium">
+                Réseau : {networkFilter === "all" ? "Tous" : networkConfig[networkFilter].label}
+                <ChevronRight className="h-3.5 w-3.5 rotate-90 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-52">
+              {networkOptions.map((opt) => (
+                <DropdownMenuItem
+                  key={opt.key}
+                  onClick={() => setNetworkFilter(opt.key)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  {opt.key !== "all" && (
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold ${networkConfig[opt.key].dot} text-white shrink-0`}>
+                      {networkConfig[opt.key].icon}
+                    </span>
+                  )}
+                  <span className="flex-1">{opt.label}</span>
+                  {networkFilter === opt.key && <Check className="h-4 w-4 text-primary" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Status dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 font-medium">
+                Statut : {statusFilter === "all" ? "Tous" : statusConfig[statusFilter].label}
+                <ChevronRight className="h-3.5 w-3.5 rotate-90 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              {statusOptions.map((opt) => (
+                <DropdownMenuItem
+                  key={opt.key}
+                  onClick={() => setStatusFilter(opt.key)}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  {opt.key !== "all" && (
+                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${statusConfig[opt.key].color}`} />
+                  )}
+                  <span className="flex-1">{opt.label}</span>
+                  {statusFilter === opt.key && <Check className="h-4 w-4 text-primary" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
             <Plus className="h-4 w-4" />
             Nouveau Post
