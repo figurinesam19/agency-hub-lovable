@@ -100,3 +100,53 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Print styles for PDF export */
+@media print {
+  /* Hide sidebar and header */
+  .flex.h-screen > aside,
+  .flex.h-screen > div > header,
+  nav,
+  [data-sidebar],
+  .print-hidden {
+    display: none !important;
+  }
+
+  /* Full width content */
+  .flex.h-screen > div {
+    margin-left: 0 !important;
+  }
+
+  main {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* White background for print */
+  body, .bg-background, .bg-card {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Print header with branding */
+  body::before {
+    content: "Pulsar Agency — Rapport Client";
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 16px 0 24px;
+    border-bottom: 2px solid hsl(217, 71%, 45%);
+    margin-bottom: 24px;
+    color: hsl(217, 71%, 45%);
+  }
+
+  /* Show textarea content as static text */
+  .print-static {
+    border: none !important;
+    resize: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+}
