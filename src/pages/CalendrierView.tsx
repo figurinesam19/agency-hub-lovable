@@ -90,11 +90,20 @@ function getCalendarDays(year: number, month: number) {
   return cells;
 }
 
-const filters: { key: Network; label: string }[] = [
+const networkOptions: { key: Network; label: string }[] = [
   { key: "all", label: "Tous" },
   { key: "instagram", label: "Instagram" },
-  { key: "linkedin", label: "LinkedIn" },
   { key: "facebook", label: "Facebook" },
+  { key: "x", label: "X" },
+  { key: "linkedin", label: "LinkedIn" },
+  { key: "tiktok", label: "TikTok" },
+];
+
+const statusOptions: { key: Status; label: string }[] = [
+  { key: "all", label: "Tous" },
+  { key: "published", label: "Publié" },
+  { key: "scheduled", label: "Programmé" },
+  { key: "draft", label: "Brouillon" },
 ];
 
 const MAX_VISIBLE = 2;
