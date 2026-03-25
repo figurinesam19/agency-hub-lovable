@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/chart";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend, AreaChart, Area, Tooltip, ComposedChart,
+  Legend, AreaChart, Area, Tooltip, ComposedChart,
 } from "recharts";
 import {
   Eye, FileText, MousePointerClick, Heart, TrendingUp, TrendingDown,
@@ -44,14 +44,8 @@ const topPosts = [
   { id: 3, title: "Nos emballages éco-responsables arrivent !", network: "Instagram", reach: "189K", engagement: "5,1%", color: "hsl(330, 80%, 60%)" },
 ];
 
-const formatData = [
-  { name: "IG Réels", value: 25, fill: "hsl(330, 80%, 60%)" },
-  { name: "IG Carrousels", value: 18, fill: "hsl(262, 60%, 55%)" },
-  { name: "IG Photos", value: 12, fill: "hsl(170, 60%, 45%)" },
-  { name: "FB Réels", value: 20, fill: "hsl(220, 70%, 55%)" },
-  { name: "FB Photos", value: 13, fill: "hsl(200, 60%, 50%)" },
-  { name: "FB Carrousels", value: 12, fill: "hsl(35, 80%, 55%)" },
-];
+
+
 
 const chartData = [
   { date: "1 Fév", portee: 24000, impressions: 38000, clicsSite: 180, engagement: 4.2 },
