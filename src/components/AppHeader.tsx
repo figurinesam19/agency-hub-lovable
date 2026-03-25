@@ -46,20 +46,6 @@ export function AppHeader() {
 
       {/* Right section */}
       <div className="flex items-center gap-4">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Rechercher un post..."
-            className="pl-9 pr-4 py-2 text-sm bg-secondary border-none rounded-lg w-56 outline-none placeholder:text-muted-foreground"
-          />
-        </div>
-
-        <button className="flex items-center gap-2 border border-border rounded-lg px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary transition-colors">
-          <Download className="h-4 w-4" />
-          Exporter
-        </button>
-
         <div className="flex items-center gap-2.5">
           <div className="leading-tight text-right">
             <p className="text-sm font-medium text-foreground">Sophie M.</p>
