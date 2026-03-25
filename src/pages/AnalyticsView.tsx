@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/chart";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  PieChart, Pie, Cell, Legend, AreaChart, Area, Tooltip, ComposedChart,
+  Legend, AreaChart, Area, Tooltip, ComposedChart,
 } from "recharts";
 import {
   Eye, FileText, MousePointerClick, Heart, TrendingUp, TrendingDown,
@@ -30,7 +30,7 @@ import type { DateRange } from "react-day-picker";
 
 // --- Colors ---
 const COLORS = {
-  portee: "#00b4d8",
+  portee: "#023e8a",
   impressions: "#90e0ef",
   impressionsFill: "#caf0f8",
   clicsSite: "#ff6000",
@@ -44,14 +44,8 @@ const topPosts = [
   { id: 3, title: "Nos emballages éco-responsables arrivent !", network: "Instagram", reach: "189K", engagement: "5,1%", color: "hsl(330, 80%, 60%)" },
 ];
 
-const formatData = [
-  { name: "IG Réels", value: 25, fill: "hsl(330, 80%, 60%)" },
-  { name: "IG Carrousels", value: 18, fill: "hsl(262, 60%, 55%)" },
-  { name: "IG Photos", value: 12, fill: "hsl(170, 60%, 45%)" },
-  { name: "FB Réels", value: 20, fill: "hsl(220, 70%, 55%)" },
-  { name: "FB Photos", value: 13, fill: "hsl(200, 60%, 50%)" },
-  { name: "FB Carrousels", value: 12, fill: "hsl(35, 80%, 55%)" },
-];
+
+
 
 const chartData = [
   { date: "1 Fév", portee: 24000, impressions: 38000, clicsSite: 180, engagement: 4.2 },
@@ -336,74 +330,42 @@ const AnalyticsView = () => {
         </CardContent>
       </Card>
 
-      {/* Top Posts + Pie Chart Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2 bg-card border-border">
-          <CardHeader>
-            <CardTitle className="text-lg">Top Posts</CardTitle>
-            <CardDescription>Publications les plus performantes ce mois</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {topPosts.map((post, i) => (
-              <div key={post.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground">
-                    #{i + 1}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{post.title}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: post.color }} />
-                      <span className="text-xs text-muted-foreground">{post.network}</span>
-                    </div>
-                  </div>
+      {/* Top Posts */}
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="text-lg">Top Posts</CardTitle>
+          <CardDescription>Publications les plus performantes ce mois</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {topPosts.map((post, i) => (
+            <div key={post.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground">
+                  #{i + 1}
                 </div>
-                <div className="flex items-center gap-6 text-right">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Portée</p>
-                    <p className="text-sm font-semibold text-foreground">{post.reach}</p>
+                <div>
+                  <p className="text-sm font-medium text-foreground">{post.title}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: post.color }} />
+                    <span className="text-xs text-muted-foreground">{post.network}</span>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Engagement</p>
-                    <p className="text-sm font-semibold text-primary">{post.engagement}</p>
-                  </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Pie Chart - Format by Network */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="text-lg">Performance par format</CardTitle>
-            <CardDescription>Segmenté par réseau</CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={260}>
-              <PieChart>
-                <Pie
-                  data={formatData}
-                  cx="50%"
-                  cy="45%"
-                  innerRadius={45}
-                  outerRadius={75}
-                  paddingAngle={3}
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  labelLine={{ strokeWidth: 1 }}
-                >
-                  {formatData.map((entry, idx) => (
-                    <Cell key={idx} fill={entry.fill} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value: number, name: string) => [`${value}%`, name]} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+              <div className="flex items-center gap-6 text-right">
+                <div>
+                  <p className="text-xs text-muted-foreground">Portée</p>
+                  <p className="text-sm font-semibold text-foreground">{post.reach}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Engagement</p>
+                  <p className="text-sm font-semibold text-primary">{post.engagement}</p>
+                </div>
+                <ExternalLink className="h-4 w-4 text-muted-foreground" />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       {/* Conversion + Constance Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
