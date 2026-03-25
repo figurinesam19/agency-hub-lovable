@@ -30,7 +30,7 @@ import type { DateRange } from "react-day-picker";
 
 // --- Colors ---
 const COLORS = {
-  portee: "#00b4d8",
+  portee: "#023e8a",
   impressions: "#90e0ef",
   impressionsFill: "#caf0f8",
   clicsSite: "#ff6000",
