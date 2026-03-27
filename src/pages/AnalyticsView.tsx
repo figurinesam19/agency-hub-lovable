@@ -9,19 +9,33 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-  type ChartConfig,
-} from "@/components/ui/chart";
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer,
-  Legend, AreaChart, Area, Tooltip, ComposedChart,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Legend,
+  AreaChart,
+  Area,
+  Tooltip,
+  ComposedChart,
 } from "recharts";
 import {
-  Eye, FileText, MousePointerClick, Heart, TrendingUp, TrendingDown,
-  Download, ExternalLink, Pencil, CalendarIcon, Instagram, Facebook,
+  Eye,
+  FileText,
+  MousePointerClick,
+  Heart,
+  TrendingUp,
+  TrendingDown,
+  Download,
+  ExternalLink,
+  Pencil,
+  CalendarIcon,
+  Instagram,
+  Facebook,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -39,13 +53,31 @@ const COLORS = {
 
 // --- Mock Data ---
 const topPosts = [
-  { id: 1, title: "Découvrez notre gamme 100% bio", network: "Instagram", reach: "342K", engagement: "6,2%", color: "hsl(330, 80%, 60%)" },
-  { id: 2, title: "Le brunch parfait, c'est celui qu'on partage", network: "Facebook", reach: "218K", engagement: "4,8%", color: "hsl(220, 70%, 55%)" },
-  { id: 3, title: "Nos emballages éco-responsables arrivent !", network: "Instagram", reach: "189K", engagement: "5,1%", color: "hsl(330, 80%, 60%)" },
+  {
+    id: 1,
+    title: "Contrôle Technique 2026 : Info ou Intox ?",
+    network: "Instagram",
+    reach: "342K",
+    engagement: "6,2%",
+    color: "hsl(330, 80%, 60%)",
+  },
+  {
+    id: 2,
+    title: "L'expertice Alteas en chiffres",
+    network: "Facebook",
+    reach: "218K",
+    engagement: "4,8%",
+    color: "hsl(220, 70%, 55%)",
+  },
+  {
+    id: 3,
+    title: "Décennale : pas de chèque blanc ! ",
+    network: "Instagram",
+    reach: "189K",
+    engagement: "5,1%",
+    color: "hsl(330, 80%, 60%)",
+  },
 ];
-
-
-
 
 const chartData = [
   { date: "1 Fév", portee: 24000, impressions: 38000, clicsSite: 180, engagement: 4.2 },
@@ -88,7 +120,7 @@ const LEGEND_ITEMS = [
 // --- Component ---
 const AnalyticsView = () => {
   const [expertComment, setExpertComment] = useState(
-    "Ce mois-ci, la stratégie de contenu vidéo a porté ses fruits avec une augmentation significative de la portée organique (+12,3%). Les Réels continuent de surperformer les autres formats. Nous recommandons d'augmenter la fréquence de publication des Réels à 4/semaine et de tester davantage de carrousels éducatifs pour LinkedIn."
+    "Ce mois-ci, la stratégie de contenu vidéo a porté ses fruits avec une augmentation significative de la portée organique (+12,3%). Les Réels continuent de surperformer les autres formats. Nous recommandons d'augmenter la fréquence de publication des Réels à 4/semaine et de tester davantage de carrousels éducatifs pour LinkedIn.",
   );
   const [linkedinModal, setLinkedinModal] = useState(false);
   const [tiktokModal, setTiktokModal] = useState(false);
@@ -106,7 +138,10 @@ const AnalyticsView = () => {
 
   // Chart visibility toggles
   const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
-    portee: true, impressions: true, clicsSite: true, engagement: true,
+    portee: true,
+    impressions: true,
+    clicsSite: true,
+    engagement: true,
   });
 
   // Chart view selector
@@ -120,7 +155,7 @@ const AnalyticsView = () => {
 
   const constancePercent = useMemo(
     () => Math.min(100, Math.round((postsPublished / postsObjectif) * 100)),
-    [postsPublished, postsObjectif]
+    [postsPublished, postsObjectif],
   );
 
   const toggleLine = (key: string) => {
@@ -167,7 +202,8 @@ const AnalyticsView = () => {
                 {dateRange?.from ? (
                   dateRange.to ? (
                     <>
-                      {format(dateRange.from, "d MMM", { locale: fr })} – {format(dateRange.to, "d MMM yyyy", { locale: fr })}
+                      {format(dateRange.from, "d MMM", { locale: fr })} –{" "}
+                      {format(dateRange.to, "d MMM yyyy", { locale: fr })}
                     </>
                   ) : (
                     format(dateRange.from, "d MMM yyyy", { locale: fr })
@@ -206,11 +242,11 @@ const AnalyticsView = () => {
                 <div className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center">
                   <kpi.icon className="h-5 w-5 text-muted-foreground" />
                 </div>
-                <span className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
-                  kpi.positive
-                    ? "bg-emerald-50 text-emerald-600"
-                    : "bg-red-50 text-red-500"
-                }`}>
+                <span
+                  className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
+                    kpi.positive ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-500"
+                  }`}
+                >
                   {kpi.positive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                   {kpi.change}
                 </span>
@@ -252,7 +288,7 @@ const AnalyticsView = () => {
                 className={cn(
                   "flex items-center gap-2 text-sm transition-opacity print-hidden",
                   chartView === "global" ? "cursor-pointer" : "cursor-default",
-                  activeLines[item.key as keyof typeof activeLines] ? "opacity-100" : "opacity-30"
+                  activeLines[item.key as keyof typeof activeLines] ? "opacity-100" : "opacity-30",
                 )}
               >
                 <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
@@ -306,7 +342,14 @@ const AnalyticsView = () => {
                 }}
               />
               {activeLines.portee && (
-                <Line yAxisId="left" type="monotone" dataKey="portee" stroke={COLORS.portee} strokeWidth={2} dot={false} />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="portee"
+                  stroke={COLORS.portee}
+                  strokeWidth={2}
+                  dot={false}
+                />
               )}
               {activeLines.impressions && (
                 <>
@@ -316,14 +359,36 @@ const AnalyticsView = () => {
                       <stop offset="95%" stopColor={COLORS.impressionsFill} stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <Area yAxisId="left" type="monotone" dataKey="impressions" stroke={COLORS.impressions} fill="url(#gradImpressions)" strokeWidth={2} />
+                  <Area
+                    yAxisId="left"
+                    type="monotone"
+                    dataKey="impressions"
+                    stroke={COLORS.impressions}
+                    fill="url(#gradImpressions)"
+                    strokeWidth={2}
+                  />
                 </>
               )}
               {activeLines.clicsSite && (
-                <Line yAxisId="left" type="monotone" dataKey="clicsSite" stroke={COLORS.clicsSite} strokeWidth={2} dot={false} />
+                <Line
+                  yAxisId="left"
+                  type="monotone"
+                  dataKey="clicsSite"
+                  stroke={COLORS.clicsSite}
+                  strokeWidth={2}
+                  dot={false}
+                />
               )}
               {activeLines.engagement && (
-                <Line yAxisId="right" type="monotone" dataKey="engagement" stroke={COLORS.engagement} strokeWidth={2.5} dot={false} strokeDasharray="6 3" />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="engagement"
+                  stroke={COLORS.engagement}
+                  strokeWidth={2.5}
+                  dot={false}
+                  strokeDasharray="6 3"
+                />
               )}
             </ComposedChart>
           </ResponsiveContainer>
@@ -338,7 +403,10 @@ const AnalyticsView = () => {
         </CardHeader>
         <CardContent className="space-y-3">
           {topPosts.map((post, i) => (
-            <div key={post.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+            <div
+              key={post.id}
+              className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors"
+            >
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center text-sm font-bold text-muted-foreground">
                   #{i + 1}
@@ -394,7 +462,10 @@ const AnalyticsView = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => { setTempObjectif(String(postsObjectif)); setEditingObjectif(true); }}
+                  onClick={() => {
+                    setTempObjectif(String(postsObjectif));
+                    setEditingObjectif(true);
+                  }}
                   className="print-hidden text-muted-foreground"
                 >
                   <Pencil className="h-3.5 w-3.5 mr-1" />
@@ -416,8 +487,12 @@ const AnalyticsView = () => {
                   min={1}
                 />
                 <span className="text-lg text-muted-foreground">posts</span>
-                <Button size="sm" onClick={handleSaveObjectif}>OK</Button>
-                <Button size="sm" variant="ghost" onClick={() => setEditingObjectif(false)}>✕</Button>
+                <Button size="sm" onClick={handleSaveObjectif}>
+                  OK
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setEditingObjectif(false)}>
+                  ✕
+                </Button>
               </div>
             ) : (
               <div className="flex items-end gap-2 mb-3">
@@ -427,7 +502,8 @@ const AnalyticsView = () => {
             )}
             <Progress value={constancePercent} className="h-3" />
             <p className="text-xs text-muted-foreground mt-2">
-              {constancePercent}% de l'objectif atteint — {constancePercent >= 90 ? "Excellent" : constancePercent >= 70 ? "Bon" : "À améliorer"}
+              {constancePercent}% de l'objectif atteint —{" "}
+              {constancePercent >= 90 ? "Excellent" : constancePercent >= 70 ? "Bon" : "À améliorer"}
             </p>
           </CardContent>
         </Card>
@@ -494,7 +570,10 @@ const AnalyticsView = () => {
           { key: "followers", label: "Nouveaux abonnés" },
         ]}
         data={linkedinData}
-        onSave={(d) => { setLinkedinData(d as typeof linkedinData); setLinkedinModal(false); }}
+        onSave={(d) => {
+          setLinkedinData(d as typeof linkedinData);
+          setLinkedinModal(false);
+        }}
       />
       <DataModal
         open={tiktokModal}
@@ -506,7 +585,10 @@ const AnalyticsView = () => {
           { key: "followers", label: "Nouveaux abonnés" },
         ]}
         data={tiktokData}
-        onSave={(d) => { setTiktokData(d as typeof tiktokData); setTiktokModal(false); }}
+        onSave={(d) => {
+          setTiktokData(d as typeof tiktokData);
+          setTiktokModal(false);
+        }}
       />
       <DataModal
         open={xModal}
@@ -518,7 +600,10 @@ const AnalyticsView = () => {
           { key: "followers", label: "Nouveaux abonnés" },
         ]}
         data={xData}
-        onSave={(d) => { setXData(d as typeof xData); setXModal(false); }}
+        onSave={(d) => {
+          setXData(d as typeof xData);
+          setXModal(false);
+        }}
       />
     </div>
   );
@@ -526,7 +611,12 @@ const AnalyticsView = () => {
 
 // --- Sub-components ---
 
-function NetworkCard({ name, color, metrics, onEdit }: {
+function NetworkCard({
+  name,
+  color,
+  metrics,
+  onEdit,
+}: {
   name: string;
   color: string;
   metrics: { label: string; value: string }[];
@@ -558,7 +648,14 @@ function NetworkCard({ name, color, metrics, onEdit }: {
   );
 }
 
-function DataModal({ open, onOpenChange, title, fields, data, onSave }: {
+function DataModal({
+  open,
+  onOpenChange,
+  title,
+  fields,
+  data,
+  onSave,
+}: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   title: string;
@@ -588,7 +685,9 @@ function DataModal({ open, onOpenChange, title, fields, data, onSave }: {
           ))}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Annuler
+          </Button>
           <Button onClick={handleSave}>Enregistrer</Button>
         </DialogFooter>
       </DialogContent>
