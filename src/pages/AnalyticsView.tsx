@@ -8,21 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ResponsiveContainer,
-  Legend,
-  AreaChart,
-  Area,
-  Tooltip,
-  ComposedChart,
-} from "recharts";
 import {
   Eye,
   FileText,
@@ -34,22 +19,10 @@ import {
   ExternalLink,
   Pencil,
   CalendarIcon,
-  Instagram,
-  Facebook,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
 import type { DateRange } from "react-day-picker";
-
-// --- Colors ---
-const COLORS = {
-  portee: "#023e8a",
-  impressions: "#90e0ef",
-  impressionsFill: "#caf0f8",
-  clicsSite: "#ff6000",
-  engagement: "#5a189a",
-};
 
 // --- Mock Data ---
 const topPosts = [
