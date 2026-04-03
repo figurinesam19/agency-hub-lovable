@@ -122,6 +122,18 @@ const PipelineCrmView = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    const { error } = await supabase.from("clients").delete().eq("id", deleteTarget.id);
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Client supprimé" });
+      fetchClients();
+    }
+    setDeleteTarget(null);
+  };
+
   const filtered = clients.filter((c) =>
     [c.entreprise, c.email, c.telephone, c.statut]
       .filter(Boolean)
