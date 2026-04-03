@@ -111,8 +111,11 @@ const AnalyticsView = () => {
   // Date range
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(2026, 1, 1),
-    to: new Date(2026, 2, 1),
+    to: new Date(2026, 2, 15),
   });
+
+  // Indicator selector
+  const [indicator, setIndicator] = useState("global");
 
   // Constance score
   const [postsPublished] = useState(18);
@@ -125,6 +128,16 @@ const AnalyticsView = () => {
     [postsPublished, postsObjectif],
   );
 
+  // Filter chart data by date range
+  const chartData = useMemo(() => {
+    if (!dateRange?.from) return allChartData;
+    return allChartData.filter((d) => {
+      const from = dateRange.from!;
+      const to = dateRange.to || from;
+      return d.date >= from && d.date <= to;
+    });
+  }, [dateRange]);
+
   const handlePrint = () => window.print();
 
   const handleSaveObjectif = () => {
@@ -133,6 +146,11 @@ const AnalyticsView = () => {
     setEditingObjectif(false);
   };
 
+  // Determine which series to show based on indicator
+  const showPortee = indicator === "global" || indicator === "portee";
+  const showEngagement = indicator === "global" || indicator === "engagement";
+  const showImpressions = indicator === "global" || indicator === "impressions";
+  const showClics = indicator === "global" || indicator === "clics";
 
   return (
     <div className="space-y-6">
@@ -207,18 +225,34 @@ const AnalyticsView = () => {
         ))}
       </div>
 
-      {/* Évolution des KPIs — Chart without legend */}
+      {/* Performance globale — Chart */}
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-lg">Évolution des KPIs</CardTitle>
-          <CardDescription>Tendances hebdomadaires sur la période sélectionnée</CardDescription>
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <CardTitle className="text-lg">Performance globale</CardTitle>
+              <CardDescription>Tendances hebdomadaires sur la période sélectionnée</CardDescription>
+            </div>
+            <Select value={indicator} onValueChange={setIndicator}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="global">Vue globale</SelectItem>
+                <SelectItem value="portee">Portée</SelectItem>
+                <SelectItem value="engagement">Engagement</SelectItem>
+                <SelectItem value="impressions">Impressions</SelectItem>
+                <SelectItem value="clics">Clics</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="h-[320px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" padding={{ left: 0, right: 0 }} />
                 <YAxis yAxisId="left" tickFormatter={formatK} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <Tooltip
@@ -228,10 +262,10 @@ const AnalyticsView = () => {
                     return [formatK(value), name.charAt(0).toUpperCase() + name.slice(1)];
                   }}
                 />
-                <Area yAxisId="left" type="monotone" dataKey="impressions" fill="#caf0f8" stroke="#90e0ef" strokeWidth={2} fillOpacity={0.5} />
-                <Line yAxisId="left" type="monotone" dataKey="portee" stroke="#023e8a" strokeWidth={2.5} dot={{ r: 4 }} />
-                <Bar yAxisId="left" dataKey="clics" fill="#ff6000" barSize={20} radius={[4, 4, 0, 0]} />
-                <Line yAxisId="right" type="monotone" dataKey="engagement" stroke="#e63946" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3 }} />
+                {showImpressions && <Area yAxisId="left" type="monotone" dataKey="impressions" fill={COLORS.impressions + "30"} stroke={COLORS.impressions} strokeWidth={2} fillOpacity={0.5} />}
+                {showPortee && <Line yAxisId="left" type="monotone" dataKey="portee" stroke={COLORS.portee} strokeWidth={2.5} dot={{ r: 4 }} />}
+                {showClics && <Bar yAxisId="left" dataKey="clics" fill={COLORS.clics} barSize={20} radius={[4, 4, 0, 0]} />}
+                {showEngagement && <Line yAxisId="right" type="monotone" dataKey="engagement" stroke={COLORS.engagement} strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3 }} />}
               </ComposedChart>
             </ResponsiveContainer>
           </div>
