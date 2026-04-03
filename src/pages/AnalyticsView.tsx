@@ -23,6 +23,17 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
+import {
+  ResponsiveContainer,
+  ComposedChart,
+  Line,
+  Area,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
 
 // --- Mock Data ---
 const topPosts = [
@@ -51,6 +62,15 @@ const topPosts = [
     color: "hsl(330, 80%, 60%)",
   },
 ];
+const chartData = [
+  { name: "Sem 1", portee: 280000, impressions: 420000, clics: 1800, engagement: 4.2 },
+  { name: "Sem 2", portee: 310000, impressions: 460000, clics: 2100, engagement: 4.5 },
+  { name: "Sem 3", portee: 295000, impressions: 440000, clics: 1950, engagement: 3.9 },
+  { name: "Sem 4", portee: 350000, impressions: 510000, clics: 2400, engagement: 5.1 },
+];
+
+const formatK = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}K` : String(v));
+
 const kpis = [
   { label: "Portée totale", value: "1,24M", change: "+12,3%", positive: true, icon: Eye },
   { label: "Budget dépensé", value: "8 420 €", change: "+5,7%", positive: true, icon: FileText },
@@ -169,6 +189,37 @@ const AnalyticsView = () => {
           </Card>
         ))}
       </div>
+
+      {/* Évolution des KPIs — Chart without legend */}
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="text-lg">Évolution des KPIs</CardTitle>
+          <CardDescription>Tendances hebdomadaires sur la période sélectionnée</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[320px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis yAxisId="left" tickFormatter={formatK} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  formatter={(value: number, name: string) => {
+                    if (name === "engagement") return [`${value}%`, "Engagement"];
+                    return [formatK(value), name.charAt(0).toUpperCase() + name.slice(1)];
+                  }}
+                />
+                <Area yAxisId="left" type="monotone" dataKey="impressions" fill="#caf0f8" stroke="#90e0ef" strokeWidth={2} fillOpacity={0.5} />
+                <Line yAxisId="left" type="monotone" dataKey="portee" stroke="#023e8a" strokeWidth={2.5} dot={{ r: 4 }} />
+                <Bar yAxisId="left" dataKey="clics" fill="#ff6000" barSize={20} radius={[4, 4, 0, 0]} />
+                <Line yAxisId="right" type="monotone" dataKey="engagement" stroke="#e63946" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3 }} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Top Posts */}
       <Card className="bg-card border-border">
