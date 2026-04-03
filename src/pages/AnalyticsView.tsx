@@ -52,43 +52,6 @@ const topPosts = [
   },
 ];
 
-const chartData = [
-  { date: "1 Fév", portee: 24000, impressions: 38000, clicsSite: 180, engagement: 4.2 },
-  { date: "3 Fév", portee: 26000, impressions: 42000, clicsSite: 210, engagement: 4.5 },
-  { date: "5 Fév", portee: 35000, impressions: 52000, clicsSite: 280, engagement: 5.1 },
-  { date: "7 Fév", portee: 34000, impressions: 48000, clicsSite: 250, engagement: 4.8 },
-  { date: "9 Fév", portee: 30000, impressions: 45000, clicsSite: 220, engagement: 4.3 },
-  { date: "11 Fév", portee: 36000, impressions: 50000, clicsSite: 260, engagement: 4.6 },
-  { date: "13 Fév", portee: 40000, impressions: 56000, clicsSite: 310, engagement: 5.0 },
-  { date: "15 Fév", portee: 44000, impressions: 62000, clicsSite: 340, engagement: 5.3 },
-  { date: "17 Fév", portee: 46000, impressions: 65000, clicsSite: 360, engagement: 5.1 },
-  { date: "19 Fév", portee: 48000, impressions: 68000, clicsSite: 380, engagement: 4.9 },
-  { date: "21 Fév", portee: 50000, impressions: 72000, clicsSite: 400, engagement: 5.2 },
-  { date: "23 Fév", portee: 54000, impressions: 76000, clicsSite: 420, engagement: 5.5 },
-  { date: "25 Fév", portee: 52000, impressions: 74000, clicsSite: 410, engagement: 5.0 },
-  { date: "27 Fév", portee: 55000, impressions: 78000, clicsSite: 430, engagement: 4.8 },
-  { date: "1 Mar", portee: 58000, impressions: 82000, clicsSite: 460, engagement: 5.4 },
-];
-
-const kpis = [
-  { label: "Portée totale", value: "1,24M", change: "+12,3%", positive: true, icon: Eye },
-  { label: "Budget dépensé", value: "8 420 €", change: "+5,7%", positive: true, icon: FileText },
-  { label: "Coût par clic", value: "0,34 €", change: "-8,1%", positive: false, icon: MousePointerClick },
-  { label: "Engagement", value: "4,8%", change: "-2,4%", positive: false, icon: Heart },
-];
-
-const formatNumber = (v: number) => {
-  if (v >= 1000000) return `${(v / 1000000).toFixed(1)}M`;
-  if (v >= 1000) return `${(v / 1000).toFixed(1)}K`;
-  return v.toString();
-};
-
-const LEGEND_ITEMS = [
-  { key: "portee", label: "Portée", color: COLORS.portee },
-  { key: "impressions", label: "Impressions", color: COLORS.impressions },
-  { key: "clicsSite", label: "Clics Site", color: COLORS.clicsSite },
-  { key: "engagement", label: "Engagement", color: COLORS.engagement },
-] as const;
 
 // --- Component ---
 const AnalyticsView = () => {
