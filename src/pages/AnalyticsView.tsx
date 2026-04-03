@@ -51,7 +51,12 @@ const topPosts = [
     color: "hsl(330, 80%, 60%)",
   },
 ];
-
+const kpis = [
+  { label: "Portée totale", value: "1,24M", change: "+12,3%", positive: true, icon: Eye },
+  { label: "Budget dépensé", value: "8 420 €", change: "+5,7%", positive: true, icon: FileText },
+  { label: "Coût par clic", value: "0,34 €", change: "-8,1%", positive: false, icon: MousePointerClick },
+  { label: "Engagement", value: "4,8%", change: "-2,4%", positive: false, icon: Heart },
+];
 
 // --- Component ---
 const AnalyticsView = () => {
