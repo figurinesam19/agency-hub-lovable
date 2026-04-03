@@ -190,6 +190,37 @@ const AnalyticsView = () => {
         ))}
       </div>
 
+      {/* Évolution des KPIs — Chart without legend */}
+      <Card className="bg-card border-border">
+        <CardHeader>
+          <CardTitle className="text-lg">Évolution des KPIs</CardTitle>
+          <CardDescription>Tendances hebdomadaires sur la période sélectionnée</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[320px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis yAxisId="left" tickFormatter={formatK} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, fontSize: 12 }}
+                  formatter={(value: number, name: string) => {
+                    if (name === "engagement") return [`${value}%`, "Engagement"];
+                    return [formatK(value), name.charAt(0).toUpperCase() + name.slice(1)];
+                  }}
+                />
+                <Area yAxisId="left" type="monotone" dataKey="impressions" fill="#caf0f8" stroke="#90e0ef" strokeWidth={2} fillOpacity={0.5} />
+                <Line yAxisId="left" type="monotone" dataKey="portee" stroke="#023e8a" strokeWidth={2.5} dot={{ r: 4 }} />
+                <Bar yAxisId="left" dataKey="clics" fill="#ff6000" barSize={20} radius={[4, 4, 0, 0]} />
+                <Line yAxisId="right" type="monotone" dataKey="engagement" stroke="#e63946" strokeWidth={2} strokeDasharray="5 5" dot={{ r: 3 }} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Top Posts */}
       <Card className="bg-card border-border">
         <CardHeader>
