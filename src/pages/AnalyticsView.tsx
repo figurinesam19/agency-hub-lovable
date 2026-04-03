@@ -62,6 +62,15 @@ const topPosts = [
     color: "hsl(330, 80%, 60%)",
   },
 ];
+const chartData = [
+  { name: "Sem 1", portee: 280000, impressions: 420000, clics: 1800, engagement: 4.2 },
+  { name: "Sem 2", portee: 310000, impressions: 460000, clics: 2100, engagement: 4.5 },
+  { name: "Sem 3", portee: 295000, impressions: 440000, clics: 1950, engagement: 3.9 },
+  { name: "Sem 4", portee: 350000, impressions: 510000, clics: 2400, engagement: 5.1 },
+];
+
+const formatK = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}K` : String(v));
+
 const kpis = [
   { label: "Portée totale", value: "1,24M", change: "+12,3%", positive: true, icon: Eye },
   { label: "Budget dépensé", value: "8 420 €", change: "+5,7%", positive: true, icon: FileText },
