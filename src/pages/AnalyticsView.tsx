@@ -9,6 +9,13 @@ import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Eye,
   FileText,
   MousePointerClick,
@@ -20,7 +27,7 @@ import {
   Pencil,
   CalendarIcon,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, isWithinInterval, startOfWeek, endOfWeek, addWeeks } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
 import {
@@ -35,7 +42,7 @@ import {
   Tooltip,
 } from "recharts";
 
-// --- Mock Data ---
+// --- Mock Data with dates ---
 const topPosts = [
   {
     id: 1,
@@ -62,12 +69,22 @@ const topPosts = [
     color: "hsl(330, 80%, 60%)",
   },
 ];
-const chartData = [
-  { name: "Sem 1", portee: 280000, impressions: 420000, clics: 1800, engagement: 4.2 },
-  { name: "Sem 2", portee: 310000, impressions: 460000, clics: 2100, engagement: 4.5 },
-  { name: "Sem 3", portee: 295000, impressions: 440000, clics: 1950, engagement: 3.9 },
-  { name: "Sem 4", portee: 350000, impressions: 510000, clics: 2400, engagement: 5.1 },
+
+const allChartData = [
+  { name: "Sem 1", date: new Date(2026, 1, 2), portee: 280000, impressions: 420000, clics: 1800, engagement: 4.2 },
+  { name: "Sem 2", date: new Date(2026, 1, 9), portee: 310000, impressions: 460000, clics: 2100, engagement: 4.5 },
+  { name: "Sem 3", date: new Date(2026, 1, 16), portee: 295000, impressions: 440000, clics: 1950, engagement: 3.9 },
+  { name: "Sem 4", date: new Date(2026, 1, 23), portee: 350000, impressions: 510000, clics: 2400, engagement: 5.1 },
+  { name: "Sem 5", date: new Date(2026, 2, 2), portee: 320000, impressions: 480000, clics: 2200, engagement: 4.7 },
+  { name: "Sem 6", date: new Date(2026, 2, 9), portee: 340000, impressions: 500000, clics: 2350, engagement: 5.0 },
 ];
+
+const COLORS = {
+  portee: "#3B82F6",
+  engagement: "#8B5CF6",
+  impressions: "#9CA3AF",
+  clics: "#10B981",
+};
 
 const formatK = (v: number) => (v >= 1000 ? `${(v / 1000).toFixed(v >= 10000 ? 0 : 1)}K` : String(v));
 
