@@ -77,17 +77,6 @@ const AnalyticsView = () => {
     to: new Date(2026, 2, 1),
   });
 
-  // Chart visibility toggles
-  const [visibleLines, setVisibleLines] = useState<Record<string, boolean>>({
-    portee: true,
-    impressions: true,
-    clicsSite: true,
-    engagement: true,
-  });
-
-  // Chart view selector
-  const [chartView, setChartView] = useState("global");
-
   // Constance score
   const [postsPublished] = useState(18);
   const [postsObjectif, setPostsObjectif] = useState(20);
@@ -99,11 +88,6 @@ const AnalyticsView = () => {
     [postsPublished, postsObjectif],
   );
 
-  const toggleLine = (key: string) => {
-    if (chartView !== "global") return;
-    setVisibleLines((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
   const handlePrint = () => window.print();
 
   const handleSaveObjectif = () => {
@@ -112,19 +96,6 @@ const AnalyticsView = () => {
     setEditingObjectif(false);
   };
 
-  // Determine which lines to show based on chartView
-  const activeLines = useMemo(() => {
-    if (chartView === "global") return visibleLines;
-    return {
-      portee: chartView === "portee",
-      impressions: chartView === "impressions",
-      clicsSite: chartView === "clicsSite",
-      engagement: chartView === "engagement",
-    };
-  }, [chartView, visibleLines]);
-
-  const showRightAxis = activeLines.engagement;
-  const showLeftAxis = activeLines.portee || activeLines.impressions || activeLines.clicsSite;
 
   return (
     <div className="space-y-6">
