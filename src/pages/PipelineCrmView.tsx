@@ -220,6 +220,7 @@ const PipelineCrmView = () => {
                 <TableHead>Téléphone</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Date d'ajout</TableHead>
+                <TableHead className="w-10"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
