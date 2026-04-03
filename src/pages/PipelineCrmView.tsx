@@ -79,6 +79,7 @@ const PipelineCrmView = () => {
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ entreprise: "", email: "", telephone: "", statut: "Prospect" });
+  const [deleteTarget, setDeleteTarget] = useState<Client | null>(null);
 
   const fetchClients = async () => {
     setLoading(true);
