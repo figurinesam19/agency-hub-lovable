@@ -315,6 +315,11 @@ const SuiviEditorialView = () => {
           <Button onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-1" /> Nouveau Contenu
           </Button>
+          {selectedIds.size > 0 && (
+            <Button variant="outline" onClick={openQuoteDialog}>
+              <Receipt className="h-4 w-4 mr-1" /> Générer Devis ({selectedIds.size})
+            </Button>
+          )}
         </div>
       </div>
 
