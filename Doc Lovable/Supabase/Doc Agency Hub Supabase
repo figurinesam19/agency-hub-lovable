@@ -1,0 +1,25 @@
+# Ce qui a été mis en place (Le "Quoi") #
+Pour transformer une simple interface visuelle en un véritable logiciel pro, le "cerveau" (**Supabase**) a été connecté au "corps" (**Lovable**).
+
+**La Mémoire Permanente** : On a créé une base de données qui stocke tout (clients, planning éditorial, statistiques). Rien ne se perd quand on ferme le navigateur.
+
+**Le Système de "Tatouage" (User ID)** : Chaque information créée est marquée d'un code unique lié à l'agence qui l'a saisie.
+
+**Exemple concret** : Si l'Agence "Alpha" enregistre un client nommé Jean Dupont, le logiciel lui colle une étiquette invisible "Propriété de l'Agence Alpha". Si l'Agence "Bêta" se connecte, le système voit l'étiquette et lui cache ce client.
+
+**Le Mur de Sécurité (RLS)** : On a activé une technologie appelée Row Level Security. C'est un garde du corps numérique qui vérifie l'identité de l'utilisateur avant d'afficher la moindre ligne de donnée.
+
+**Le Poste de Contrôle (Authentification)** : Un système d'inscription et de connexion sécurisé a été installé, exigeant des mots de passe robustes pour protéger l'accès aux données sensibles des agences.
+
+### Pourquoi c’est vital pour Agency Hub (Le "Pourquoi") ###
+Sans ces fondations, Agency Hub ne serait qu'une maquette de démonstration. Voici pourquoi cette configuration est le moteur du business :
+
+**Confidentialité Absolue** : C'est la base de la confiance. Grâce au cloisonnement des données, il est techniquement impossible qu'une agence accède par erreur aux clients ou à la stratégie d'une autre agence.
+
+**Évolutivité (Scalabilité)** : Le système est conçu pour accueillir des milliers d'utilisateurs simultanément sans que les données ne s'emmêlent. Le logiciel est prêt à passer à l'échelle dès demain.
+
+**Autonomie Totale** : Chaque agence gère son propre espace, ses propres validations et son propre calendrier sans aucune intervention manuelle de l'administrateur.
+
+**Sécurité de niveau Bancaire** : En déléguant la gestion des accès à une infrastructure comme Supabase, on assure une protection contre les piratages et les fuites de mots de passe, ce qui est indispensable pour un outil pro.
+
+**En résumé** : On a construit un coffre-fort intelligent où chaque agence possède son propre compartiment blindé, tout en utilisant la même interface moderne.
