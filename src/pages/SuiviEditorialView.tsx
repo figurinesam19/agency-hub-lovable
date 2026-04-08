@@ -403,6 +403,12 @@ const SuiviEditorialView = () => {
                       className="h-16 cursor-pointer hover:bg-muted/30"
                       onClick={() => openSidePanel(post)}
                     >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedIds.has(post.id)}
+                          onCheckedChange={() => toggleSelect(post.id)}
+                        />
+                      </TableCell>
                       <TableCell>
                         {post.thumbnail_url ? (
                           <img src={post.thumbnail_url} alt="" className="w-10 h-10 rounded object-cover" />
