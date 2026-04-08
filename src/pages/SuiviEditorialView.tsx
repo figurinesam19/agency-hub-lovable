@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Lightbulb, CheckCircle, Eye, FileText, Plus, MoreVertical, Search, MessageCircle, List, CalendarDays, Image as ImageIcon, Check } from "lucide-react";
+import { Lightbulb, CheckCircle, Eye, FileText, Plus, MoreVertical, Search, MessageCircle, List, CalendarDays, Image as ImageIcon, Check, Receipt, Printer } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
@@ -92,6 +93,39 @@ const SuiviEditorialView = () => {
 
   // Delete confirm
   const [deleteTarget, setDeleteTarget] = useState<Post | null>(null);
+
+  // Quote / Devis
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [quotePrices, setQuotePrices] = useState<Record<string, string>>({});
+  const [quoteClient, setQuoteClient] = useState("");
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((p) => p.id)));
+    }
+  };
+
+  const openQuoteDialog = () => {
+    const prices: Record<string, string> = {};
+    selectedIds.forEach((id) => { prices[id] = ""; });
+    setQuotePrices(prices);
+    setQuoteClient("");
+    setQuoteOpen(true);
+  };
+
+  const selectedPosts = posts.filter((p) => selectedIds.has(p.id));
+  const quoteTotal = selectedPosts.reduce((sum, p) => sum + (parseFloat(quotePrices[p.id] || "0") || 0), 0);
 
   const fetchPosts = useCallback(async () => {
     if (!user) return;
@@ -281,6 +315,11 @@ const SuiviEditorialView = () => {
           <Button onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-1" /> Nouveau Contenu
           </Button>
+          {selectedIds.size > 0 && (
+            <Button variant="outline" onClick={openQuoteDialog}>
+              <Receipt className="h-4 w-4 mr-1" /> Générer Devis ({selectedIds.size})
+            </Button>
+          )}
         </div>
       </div>
 
@@ -332,6 +371,12 @@ const SuiviEditorialView = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[40px]">
+                  <Checkbox
+                    checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                </TableHead>
                 <TableHead className="uppercase text-xs tracking-wider text-muted-foreground w-[50px]">Aperçu</TableHead>
                 <TableHead className="uppercase text-xs tracking-wider text-muted-foreground">Date prévue</TableHead>
                 <TableHead className="uppercase text-xs tracking-wider text-muted-foreground">Thématique</TableHead>
@@ -344,7 +389,7 @@ const SuiviEditorialView = () => {
             <TableBody>
               {filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                     Aucun contenu trouvé. Cliquez sur "Nouveau Contenu" pour commencer.
                   </TableCell>
                 </TableRow>
@@ -358,6 +403,12 @@ const SuiviEditorialView = () => {
                       className="h-16 cursor-pointer hover:bg-muted/30"
                       onClick={() => openSidePanel(post)}
                     >
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedIds.has(post.id)}
+                          onCheckedChange={() => toggleSelect(post.id)}
+                        />
+                      </TableCell>
                       <TableCell>
                         {post.thumbnail_url ? (
                           <img src={post.thumbnail_url} alt="" className="w-10 h-10 rounded object-cover" />
@@ -566,6 +617,81 @@ const SuiviEditorialView = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Quote / Devis Modal */}
+      <Dialog open={quoteOpen} onOpenChange={setQuoteOpen}>
+        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:border-none">
+          <DialogHeader>
+            <DialogTitle className="text-xl">Devis</DialogTitle>
+            <DialogDescription>Aperçu du devis pour les contenus sélectionnés.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4" id="quote-content">
+            {/* Client name */}
+            <div className="grid gap-2">
+              <Label className="text-xs text-muted-foreground uppercase">Nom du client</Label>
+              <Input
+                value={quoteClient}
+                onChange={(e) => setQuoteClient(e.target.value)}
+                placeholder="Ex: Vacherand Immobilier"
+                className="print:border-none print:px-0 print:shadow-none"
+              />
+            </div>
+
+            {/* Date */}
+            <p className="text-sm text-muted-foreground">
+              Date : {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+            </p>
+
+            {/* Items table */}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-xs uppercase">Contenu</TableHead>
+                  <TableHead className="text-xs uppercase">Format</TableHead>
+                  <TableHead className="text-xs uppercase">Réseau</TableHead>
+                  <TableHead className="text-xs uppercase text-right w-[120px]">Prix unitaire (€)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {selectedPosts.map((p) => (
+                  <TableRow key={p.id}>
+                    <TableCell className="font-medium">{p.thematique}</TableCell>
+                    <TableCell className="text-muted-foreground">{p.format}</TableCell>
+                    <TableCell className="text-muted-foreground">{p.reseau}</TableCell>
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={quotePrices[p.id] || ""}
+                        onChange={(e) => setQuotePrices({ ...quotePrices, [p.id]: e.target.value })}
+                        placeholder="0.00"
+                        className="w-[100px] ml-auto text-right print:border-none print:px-0"
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+
+            {/* Total */}
+            <div className="flex justify-end border-t border-border pt-4">
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">Total HT</p>
+                <p className="text-2xl font-bold text-foreground">{quoteTotal.toFixed(2)} €</p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="print:hidden">
+            <Button variant="outline" onClick={() => setQuoteOpen(false)}>Fermer</Button>
+            <Button onClick={() => window.print()}>
+              <Printer className="h-4 w-4 mr-1" /> Imprimer / PDF
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
