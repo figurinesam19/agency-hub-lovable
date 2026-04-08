@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Lightbulb, CheckCircle, Eye, FileText, Plus, MoreVertical, Search, MessageCircle, List, CalendarDays, Image as ImageIcon, Check } from "lucide-react";
+import { Lightbulb, CheckCircle, Eye, FileText, Plus, MoreVertical, Search, MessageCircle, List, CalendarDays, Image as ImageIcon, Check, Receipt, Printer } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
