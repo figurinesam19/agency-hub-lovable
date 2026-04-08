@@ -94,6 +94,39 @@ const SuiviEditorialView = () => {
   // Delete confirm
   const [deleteTarget, setDeleteTarget] = useState<Post | null>(null);
 
+  // Quote / Devis
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [quotePrices, setQuotePrices] = useState<Record<string, string>>({});
+  const [quoteClient, setQuoteClient] = useState("");
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filtered.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filtered.map((p) => p.id)));
+    }
+  };
+
+  const openQuoteDialog = () => {
+    const prices: Record<string, string> = {};
+    selectedIds.forEach((id) => { prices[id] = ""; });
+    setQuotePrices(prices);
+    setQuoteClient("");
+    setQuoteOpen(true);
+  };
+
+  const selectedPosts = posts.filter((p) => selectedIds.has(p.id));
+  const quoteTotal = selectedPosts.reduce((sum, p) => sum + (parseFloat(quotePrices[p.id] || "0") || 0), 0);
+
   const fetchPosts = useCallback(async () => {
     if (!user) return;
     const { data, error } = await supabase
