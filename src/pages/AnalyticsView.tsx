@@ -252,7 +252,7 @@ const AnalyticsView = () => {
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" padding={{ left: 0, right: 0 }} />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} stroke="hsl(var(--muted-foreground))" padding={{ left: 0, right: 0 }} scale="point" />
                 <YAxis yAxisId="left" tickFormatter={formatK} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <YAxis yAxisId="right" orientation="right" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
                 <Tooltip
