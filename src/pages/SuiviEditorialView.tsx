@@ -371,6 +371,12 @@ const SuiviEditorialView = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[40px]">
+                  <Checkbox
+                    checked={filtered.length > 0 && selectedIds.size === filtered.length}
+                    onCheckedChange={toggleSelectAll}
+                  />
+                </TableHead>
                 <TableHead className="uppercase text-xs tracking-wider text-muted-foreground w-[50px]">Aperçu</TableHead>
                 <TableHead className="uppercase text-xs tracking-wider text-muted-foreground">Date prévue</TableHead>
                 <TableHead className="uppercase text-xs tracking-wider text-muted-foreground">Thématique</TableHead>
