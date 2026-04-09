@@ -202,6 +202,33 @@ const SuiviEditorialView = () => {
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
+  // Fetch CRM clients for quote dropdown
+  const fetchCrmClients = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase.from("clients").select("id, entreprise, email, telephone, siret").order("entreprise");
+    setCrmClients(data ?? []);
+  }, [user]);
+
+  useEffect(() => { fetchCrmClients(); }, [fetchCrmClients]);
+
+  const handleSelectClient = (clientId: string) => {
+    setQuoteSelectedClientId(clientId);
+    if (clientId === "__manual__") {
+      setQuoteClient("");
+      setQuoteClientEmail("");
+      setQuoteClientAddress("");
+      setQuoteClientSiret("");
+      return;
+    }
+    const c = crmClients.find((cl) => String(cl.id) === clientId);
+    if (c) {
+      setQuoteClient(c.entreprise || "");
+      setQuoteClientEmail(c.email || "");
+      setQuoteClientSiret(c.siret || "");
+      setQuoteClientAddress("");
+    }
+  };
+
   const filtered = (activeFilter === "Tous" ? posts : posts.filter((p) => p.statut === activeFilter))
     .filter((p) => !searchQuery || p.thematique.toLowerCase().includes(searchQuery.toLowerCase()));
 
