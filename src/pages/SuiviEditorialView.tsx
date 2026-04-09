@@ -693,6 +693,7 @@ const SuiviEditorialView = () => {
               <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Client</p>
               <Input value={quoteClient} onChange={(e) => setQuoteClient(e.target.value)} placeholder="Nom du client" className="font-semibold border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent" />
               <Input value={quoteClientAddress} onChange={(e) => setQuoteClientAddress(e.target.value)} placeholder="Adresse du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
+              <Input value={quoteClientSiret} onChange={(e) => setQuoteClientSiret(e.target.value)} placeholder="SIRET du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">Réf. client :</span>
                 <Input value={quoteClientRef} onChange={(e) => setQuoteClientRef(e.target.value)} placeholder="—" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent w-[120px]" />
