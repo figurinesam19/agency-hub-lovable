@@ -101,9 +101,12 @@ const SuiviEditorialView = () => {
   const [quoteQty, setQuoteQty] = useState<Record<string, string>>({});
   const [quoteTva, setQuoteTva] = useState<Record<string, string>>({});
   const [quoteClient, setQuoteClient] = useState("");
+  const [quoteClientEmail, setQuoteClientEmail] = useState("");
   const [quoteClientAddress, setQuoteClientAddress] = useState("");
   const [quoteClientSiret, setQuoteClientSiret] = useState("");
   const [quoteClientRef, setQuoteClientRef] = useState("");
+  const [quoteSelectedClientId, setQuoteSelectedClientId] = useState<string>("");
+  const [crmClients, setCrmClients] = useState<{ id: number; entreprise: string | null; email: string | null; telephone: string | null; siret: string | null }[]>([]);
   const [quoteAgencyName, setQuoteAgencyName] = useState("Pulsar Agency");
   const [quoteAgencyAddress, setQuoteAgencyAddress] = useState("12 Rue de l'Innovation, 59000 Lille");
   const [quoteAgencySiret, setQuoteAgencySiret] = useState("");
