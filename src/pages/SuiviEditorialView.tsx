@@ -98,7 +98,19 @@ const SuiviEditorialView = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [quotePrices, setQuotePrices] = useState<Record<string, string>>({});
+  const [quoteQty, setQuoteQty] = useState<Record<string, string>>({});
+  const [quoteTva, setQuoteTva] = useState<Record<string, string>>({});
   const [quoteClient, setQuoteClient] = useState("");
+  const [quoteClientAddress, setQuoteClientAddress] = useState("");
+  const [quoteClientRef, setQuoteClientRef] = useState("");
+  const [quoteAgencyName, setQuoteAgencyName] = useState("Pulsar Agency");
+  const [quoteAgencyAddress, setQuoteAgencyAddress] = useState("12 Rue de l'Innovation, 59000 Lille");
+  const [quoteAgencySiret, setQuoteAgencySiret] = useState("");
+  const [quoteAgencyEmail, setQuoteAgencyEmail] = useState("");
+  const [quoteAgencyPhone, setQuoteAgencyPhone] = useState("");
+  const [quoteAgencyTva, setQuoteAgencyTva] = useState("");
+  const [quotePayment, setQuotePayment] = useState("Virement bancaire");
+  const [quotePaymentTerms, setQuotePaymentTerms] = useState("30 jours");
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -118,14 +130,34 @@ const SuiviEditorialView = () => {
 
   const openQuoteDialog = () => {
     const prices: Record<string, string> = {};
-    selectedIds.forEach((id) => { prices[id] = ""; });
+    const qty: Record<string, string> = {};
+    const tva: Record<string, string> = {};
+    selectedIds.forEach((id) => { prices[id] = ""; qty[id] = "1"; tva[id] = "20"; });
     setQuotePrices(prices);
+    setQuoteQty(qty);
+    setQuoteTva(tva);
     setQuoteClient("");
+    setQuoteClientAddress("");
+    setQuoteClientRef("");
     setQuoteOpen(true);
   };
 
   const selectedPosts = posts.filter((p) => selectedIds.has(p.id));
-  const quoteTotal = selectedPosts.reduce((sum, p) => sum + (parseFloat(quotePrices[p.id] || "0") || 0), 0);
+
+  const quoteLines = selectedPosts.map((p) => {
+    const qty = parseFloat(quoteQty[p.id] || "1") || 1;
+    const price = parseFloat(quotePrices[p.id] || "0") || 0;
+    const tvaRate = parseFloat(quoteTva[p.id] || "20") || 0;
+    const lineHT = qty * price;
+    const lineTVA = lineHT * (tvaRate / 100);
+    return { post: p, qty, price, tvaRate, lineHT, lineTVA };
+  });
+
+  const quoteTotalHT = quoteLines.reduce((s, l) => s + l.lineHT, 0);
+  const quoteTotalTVA = quoteLines.reduce((s, l) => s + l.lineTVA, 0);
+  const quoteTotalTTC = quoteTotalHT + quoteTotalTVA;
+
+  const quoteNumber = `DEV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 999) + 1).padStart(3, "0")}`;
 
   const fetchPosts = useCallback(async () => {
     if (!user) return;
@@ -620,67 +652,126 @@ const SuiviEditorialView = () => {
 
       {/* Quote / Devis Modal */}
       <Dialog open={quoteOpen} onOpenChange={setQuoteOpen}>
-        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:border-none">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Devis</DialogTitle>
-            <DialogDescription>Aperçu du devis pour les contenus sélectionnés.</DialogDescription>
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:border-none print:max-h-none">
+          <DialogHeader className="print:hidden">
+            <DialogTitle className="text-xl">Aperçu du Devis</DialogTitle>
+            <DialogDescription>Personnalisez et exportez votre devis professionnel.</DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-4" id="quote-content">
-            {/* Client name */}
-            <div className="grid gap-2">
-              <Label className="text-xs text-muted-foreground uppercase">Nom du client</Label>
-              <Input
-                value={quoteClient}
-                onChange={(e) => setQuoteClient(e.target.value)}
-                placeholder="Ex: Vacherand Immobilier"
-                className="print:border-none print:px-0 print:shadow-none"
-              />
+          <div className="space-y-6 py-2" id="quote-content">
+            {/* Header: Agency left, Doc info right */}
+            <div className="flex justify-between items-start gap-6">
+              {/* Left: Agency */}
+              <div className="space-y-1 flex-1">
+                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <Input value={quoteAgencyName} onChange={(e) => setQuoteAgencyName(e.target.value)} className="font-bold text-lg border-none p-0 h-auto shadow-none focus-visible:ring-0 print:text-foreground" placeholder="Nom de l'agence" />
+                <Input value={quoteAgencyAddress} onChange={(e) => setQuoteAgencyAddress(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Adresse" />
+                <Input value={quoteAgencySiret} onChange={(e) => setQuoteAgencySiret(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="SIRET : ..." />
+                <Input value={quoteAgencyEmail} onChange={(e) => setQuoteAgencyEmail(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="email@agence.com" />
+                <Input value={quoteAgencyPhone} onChange={(e) => setQuoteAgencyPhone(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Téléphone" />
+              </div>
+
+              {/* Right: Document info */}
+              <div className="text-right space-y-1 flex-1">
+                <h2 className="text-2xl font-extrabold tracking-tight text-foreground">DEVIS</h2>
+                <p className="text-sm font-semibold text-muted-foreground">{quoteNumber}</p>
+                <p className="text-sm text-muted-foreground">
+                  Date d'émission : {new Date().toLocaleDateString("fr-FR")}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Validité : {new Date(Date.now() + 30 * 86400000).toLocaleDateString("fr-FR")}
+                </p>
+              </div>
             </div>
 
-            {/* Date */}
-            <p className="text-sm text-muted-foreground">
-              Date : {new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-            </p>
+            {/* Client block */}
+            <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
+              <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Client</p>
+              <Input value={quoteClient} onChange={(e) => setQuoteClient(e.target.value)} placeholder="Nom du client" className="font-semibold border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent" />
+              <Input value={quoteClientAddress} onChange={(e) => setQuoteClientAddress(e.target.value)} placeholder="Adresse du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Réf. client :</span>
+                <Input value={quoteClientRef} onChange={(e) => setQuoteClientRef(e.target.value)} placeholder="—" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent w-[120px]" />
+              </div>
+            </div>
 
             {/* Items table */}
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-xs uppercase">Contenu</TableHead>
-                  <TableHead className="text-xs uppercase">Format</TableHead>
-                  <TableHead className="text-xs uppercase">Réseau</TableHead>
-                  <TableHead className="text-xs uppercase text-right w-[120px]">Prix unitaire (€)</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedPosts.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell className="font-medium">{p.thematique}</TableCell>
-                    <TableCell className="text-muted-foreground">{p.format}</TableCell>
-                    <TableCell className="text-muted-foreground">{p.reseau}</TableCell>
-                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={quotePrices[p.id] || ""}
-                        onChange={(e) => setQuotePrices({ ...quotePrices, [p.id]: e.target.value })}
-                        placeholder="0.00"
-                        className="w-[100px] ml-auto text-right print:border-none print:px-0"
-                      />
-                    </TableCell>
+            <div className="border border-border rounded-lg overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-primary/5 hover:bg-primary/5">
+                    <TableHead className="text-xs uppercase font-semibold text-foreground">Contenu</TableHead>
+                    <TableHead className="text-xs uppercase font-semibold text-foreground">Format</TableHead>
+                    <TableHead className="text-xs uppercase font-semibold text-foreground">Réseau</TableHead>
+                    <TableHead className="text-xs uppercase font-semibold text-foreground text-center w-[70px]">Qté</TableHead>
+                    <TableHead className="text-xs uppercase font-semibold text-foreground text-right w-[110px]">Prix unit. €</TableHead>
+                    <TableHead className="text-xs uppercase font-semibold text-foreground text-center w-[80px]">TVA %</TableHead>
+                    <TableHead className="text-xs uppercase font-semibold text-foreground text-right w-[100px]">Montant €</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {quoteLines.map((line) => (
+                    <TableRow key={line.post.id}>
+                      <TableCell className="font-medium text-sm">{line.post.thematique}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{line.post.format}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">{line.post.reseau}</TableCell>
+                      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                        <Input type="number" min="1" value={quoteQty[line.post.id] || "1"} onChange={(e) => setQuoteQty({ ...quoteQty, [line.post.id]: e.target.value })} className="w-[55px] mx-auto text-center text-sm print:border-none print:p-0" />
+                      </TableCell>
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                        <Input type="number" min="0" step="0.01" value={quotePrices[line.post.id] || ""} onChange={(e) => setQuotePrices({ ...quotePrices, [line.post.id]: e.target.value })} placeholder="0,00" className="w-[90px] ml-auto text-right text-sm print:border-none print:p-0" />
+                      </TableCell>
+                      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                        <Input type="number" min="0" step="0.5" value={quoteTva[line.post.id] || "20"} onChange={(e) => setQuoteTva({ ...quoteTva, [line.post.id]: e.target.value })} className="w-[60px] mx-auto text-center text-sm print:border-none print:p-0" />
+                      </TableCell>
+                      <TableCell className="text-right font-medium text-sm">{line.lineHT.toFixed(2)} €</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-            {/* Total */}
-            <div className="flex justify-end border-t border-border pt-4">
-              <div className="text-right">
-                <p className="text-sm text-muted-foreground">Total HT</p>
-                <p className="text-2xl font-bold text-foreground">{quoteTotal.toFixed(2)} €</p>
+            {/* Totals */}
+            <div className="flex justify-end">
+              <div className="w-[280px] space-y-2 border border-border rounded-lg p-4">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Total HT</span>
+                  <span className="font-medium text-foreground">{quoteTotalHT.toFixed(2)} €</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">TVA</span>
+                  <span className="font-medium text-foreground">{quoteTotalTVA.toFixed(2)} €</span>
+                </div>
+                <div className="border-t border-border pt-2 flex justify-between">
+                  <span className="font-bold text-foreground">Total TTC</span>
+                  <span className="text-xl font-extrabold text-foreground">{quoteTotalTTC.toFixed(2)} €</span>
+                </div>
               </div>
+            </div>
+
+            {/* Payment & Terms */}
+            <div className="grid grid-cols-2 gap-6 border-t border-border pt-4">
+              <div className="space-y-2">
+                <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Moyens de paiement</p>
+                <Input value={quotePayment} onChange={(e) => setQuotePayment(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0" placeholder="Virement bancaire" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Conditions de paiement</p>
+                <Input value={quotePaymentTerms} onChange={(e) => setQuotePaymentTerms(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0" placeholder="30 jours" />
+              </div>
+            </div>
+
+            {/* Legal footer */}
+            <div className="border-t border-border pt-3 text-center space-y-0.5">
+              <p className="text-[11px] text-muted-foreground font-medium">{quoteAgencyName}</p>
+              <p className="text-[10px] text-muted-foreground">{quoteAgencyAddress}</p>
+              <p className="text-[10px] text-muted-foreground">
+                {quoteAgencySiret && `SIRET : ${quoteAgencySiret}`}
+                {quoteAgencyTva && ` — N° TVA : ${quoteAgencyTva}`}
+              </p>
+              <Input value={quoteAgencyTva} onChange={(e) => setQuoteAgencyTva(e.target.value)} className="text-[10px] text-center border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground print:hidden mx-auto w-[250px]" placeholder="N° TVA intracommunautaire (optionnel)" />
             </div>
           </div>
 
