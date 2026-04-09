@@ -194,6 +194,15 @@ const PipelineCrmView = () => {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="siret">Numéro SIRET</Label>
+                <Input
+                  id="siret"
+                  value={form.siret}
+                  onChange={(e) => setForm({ ...form, siret: e.target.value })}
+                  placeholder="123 456 789 00012"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label>Statut</Label>
                 <Select value={form.statut} onValueChange={(v) => setForm({ ...form, statut: v })}>
                   <SelectTrigger>
@@ -232,6 +241,7 @@ const PipelineCrmView = () => {
                 <TableHead>Entreprise</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Téléphone</TableHead>
+                <TableHead>SIRET</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Date d'ajout</TableHead>
                 <TableHead className="w-10"></TableHead>
@@ -240,13 +250,13 @@ const PipelineCrmView = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Chargement...
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Aucun client trouvé
                   </TableCell>
                 </TableRow>
