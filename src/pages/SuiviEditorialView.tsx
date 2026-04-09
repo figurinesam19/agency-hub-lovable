@@ -141,9 +141,12 @@ const SuiviEditorialView = () => {
     setQuoteQty(qty);
     setQuoteTva(tva);
     setQuoteClient("");
+    setQuoteClientEmail("");
     setQuoteClientAddress("");
     setQuoteClientSiret("");
     setQuoteClientRef("");
+    setQuoteSelectedClientId("");
+    fetchCrmClients();
     setQuoteOpen(true);
   };
 
