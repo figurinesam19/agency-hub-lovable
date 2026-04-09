@@ -722,9 +722,21 @@ const SuiviEditorialView = () => {
             </div>
 
             {/* Client block */}
-            <div className="bg-muted/50 rounded-lg p-4 space-y-2 border border-border">
+            <div className="bg-muted/50 rounded-lg p-4 space-y-3 border border-border">
               <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Client</p>
+              <Select value={quoteSelectedClientId} onValueChange={handleSelectClient}>
+                <SelectTrigger className="print:hidden">
+                  <SelectValue placeholder="Sélectionner un client du CRM..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__manual__">✏️ Saisie manuelle</SelectItem>
+                  {crmClients.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>{c.entreprise || `Client #${c.id}`}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Input value={quoteClient} onChange={(e) => setQuoteClient(e.target.value)} placeholder="Nom du client" className="font-semibold border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent" />
+              <Input value={quoteClientEmail} onChange={(e) => setQuoteClientEmail(e.target.value)} placeholder="Email du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
               <Input value={quoteClientAddress} onChange={(e) => setQuoteClientAddress(e.target.value)} placeholder="Adresse du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
               <Input value={quoteClientSiret} onChange={(e) => setQuoteClientSiret(e.target.value)} placeholder="SIRET du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
               <div className="flex items-center gap-2">
