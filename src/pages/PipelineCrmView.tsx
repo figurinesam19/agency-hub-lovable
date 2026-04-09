@@ -26,8 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,7 +43,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Plus, Building2, Mail, Phone, Search, MoreVertical, Trash2 } from "lucide-react";
+import { Plus, Building2, Mail, Phone, Search, MoreVertical, Trash2, Pencil } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Client {
@@ -79,7 +78,9 @@ const PipelineCrmView = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [form, setForm] = useState({ entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
+  const [editForm, setEditForm] = useState({ id: 0, entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
   const [deleteTarget, setDeleteTarget] = useState<Client | null>(null);
 
   const fetchClients = async () => {
@@ -120,6 +121,40 @@ const PipelineCrmView = () => {
       toast({ title: "Client ajouté" });
       setForm({ entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
       setDialogOpen(false);
+      fetchClients();
+    }
+  };
+
+  const openEdit = (c: Client) => {
+    setEditForm({
+      id: c.id,
+      entreprise: c.entreprise || "",
+      email: c.email || "",
+      telephone: c.telephone || "",
+      siret: c.siret || "",
+      statut: c.statut || "Prospect",
+    });
+    setEditDialogOpen(true);
+  };
+
+  const handleEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase
+      .from("clients")
+      .update({
+        entreprise: editForm.entreprise,
+        email: editForm.email || null,
+        telephone: editForm.telephone || null,
+        siret: editForm.siret || null,
+        statut: editForm.statut,
+      })
+      .eq("id", editForm.id);
+
+    if (error) {
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Client modifié" });
+      setEditDialogOpen(false);
       fetchClients();
     }
   };
@@ -166,52 +201,26 @@ const PipelineCrmView = () => {
             <form onSubmit={handleCreate} className="space-y-4 mt-2">
               <div className="space-y-2">
                 <Label htmlFor="entreprise">Entreprise *</Label>
-                <Input
-                  id="entreprise"
-                  required
-                  value={form.entreprise}
-                  onChange={(e) => setForm({ ...form, entreprise: e.target.value })}
-                  placeholder="Nom de l'entreprise"
-                />
+                <Input id="entreprise" required value={form.entreprise} onChange={(e) => setForm({ ...form, entreprise: e.target.value })} placeholder="Nom de l'entreprise" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  placeholder="contact@entreprise.com"
-                />
+                <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="contact@entreprise.com" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="telephone">Téléphone</Label>
-                <Input
-                  id="telephone"
-                  value={form.telephone}
-                  onChange={(e) => setForm({ ...form, telephone: e.target.value })}
-                  placeholder="06 12 34 56 78"
-                />
+                <Input id="telephone" value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="06 12 34 56 78" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="siret">Numéro SIRET</Label>
-                <Input
-                  id="siret"
-                  value={form.siret}
-                  onChange={(e) => setForm({ ...form, siret: e.target.value })}
-                  placeholder="123 456 789 00012"
-                />
+                <Input id="siret" value={form.siret} onChange={(e) => setForm({ ...form, siret: e.target.value })} placeholder="123 456 789 00012" />
               </div>
               <div className="space-y-2">
                 <Label>Statut</Label>
                 <Select value={form.statut} onValueChange={(v) => setForm({ ...form, statut: v })}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {STATUTS.map((s) => (
-                      <SelectItem key={s} value={s}>{s}</SelectItem>
-                    ))}
+                    {STATUTS.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
                   </SelectContent>
                 </Select>
               </div>
@@ -224,12 +233,7 @@ const PipelineCrmView = () => {
       {/* Search */}
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Rechercher un client..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="pl-10"
-        />
+        <Input placeholder="Rechercher un client..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
       </div>
 
       {/* Table */}
@@ -250,15 +254,11 @@ const PipelineCrmView = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    Chargement...
-                  </TableCell>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Chargement...</TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    Aucun client trouvé
-                  </TableCell>
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Aucun client trouvé</TableCell>
                 </TableRow>
               ) : (
                 filtered.map((c) => (
@@ -283,9 +283,7 @@ const PipelineCrmView = () => {
                         </span>
                       ) : "—"}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {c.siret || "—"}
-                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{c.siret || "—"}</TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statutColor(c.statut)}`}>
                         {c.statut || "—"}
@@ -302,10 +300,11 @@ const PipelineCrmView = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive cursor-pointer"
-                            onClick={() => setDeleteTarget(c)}
-                          >
+                          <DropdownMenuItem className="cursor-pointer" onClick={() => openEdit(c)}>
+                            <Pencil className="h-4 w-4 mr-2" />
+                            Modifier
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-destructive focus:text-destructive cursor-pointer" onClick={() => setDeleteTarget(c)}>
                             <Trash2 className="h-4 w-4 mr-2" />
                             Supprimer
                           </DropdownMenuItem>
@@ -319,6 +318,43 @@ const PipelineCrmView = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifier le client</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEdit} className="space-y-4 mt-2">
+            <div className="space-y-2">
+              <Label>Entreprise *</Label>
+              <Input required value={editForm.entreprise} onChange={(e) => setEditForm({ ...editForm, entreprise: e.target.value })} placeholder="Nom de l'entreprise" />
+            </div>
+            <div className="space-y-2">
+              <Label>Email</Label>
+              <Input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} placeholder="contact@entreprise.com" />
+            </div>
+            <div className="space-y-2">
+              <Label>Téléphone</Label>
+              <Input value={editForm.telephone} onChange={(e) => setEditForm({ ...editForm, telephone: e.target.value })} placeholder="06 12 34 56 78" />
+            </div>
+            <div className="space-y-2">
+              <Label>Numéro SIRET</Label>
+              <Input value={editForm.siret} onChange={(e) => setEditForm({ ...editForm, siret: e.target.value })} placeholder="123 456 789 00012" />
+            </div>
+            <div className="space-y-2">
+              <Label>Statut</Label>
+              <Select value={editForm.statut} onValueChange={(v) => setEditForm({ ...editForm, statut: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {STATUTS.map((s) => (<SelectItem key={s} value={s}>{s}</SelectItem>))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="submit" className="w-full">Enregistrer</Button>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
