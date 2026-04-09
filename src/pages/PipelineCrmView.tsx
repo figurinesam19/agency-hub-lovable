@@ -52,6 +52,7 @@ interface Client {
   entreprise: string | null;
   email: string | null;
   telephone: string | null;
+  siret: string | null;
   statut: string | null;
   created_at: string;
 }
@@ -78,7 +79,7 @@ const PipelineCrmView = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ entreprise: "", email: "", telephone: "", statut: "Prospect" });
+  const [form, setForm] = useState({ entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
   const [deleteTarget, setDeleteTarget] = useState<Client | null>(null);
 
   const fetchClients = async () => {
@@ -108,6 +109,7 @@ const PipelineCrmView = () => {
       entreprise: form.entreprise,
       email: form.email || null,
       telephone: form.telephone || null,
+      siret: form.siret || null,
       statut: form.statut,
       user_id: user.id,
     });
@@ -116,7 +118,7 @@ const PipelineCrmView = () => {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Client ajouté" });
-      setForm({ entreprise: "", email: "", telephone: "", statut: "Prospect" });
+      setForm({ entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
       setDialogOpen(false);
       fetchClients();
     }
@@ -135,7 +137,7 @@ const PipelineCrmView = () => {
   };
 
   const filtered = clients.filter((c) =>
-    [c.entreprise, c.email, c.telephone, c.statut]
+    [c.entreprise, c.email, c.telephone, c.siret, c.statut]
       .filter(Boolean)
       .some((v) => v!.toLowerCase().includes(search.toLowerCase()))
   );
