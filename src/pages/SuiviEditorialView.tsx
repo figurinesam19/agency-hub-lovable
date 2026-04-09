@@ -102,6 +102,7 @@ const SuiviEditorialView = () => {
   const [quoteTva, setQuoteTva] = useState<Record<string, string>>({});
   const [quoteClient, setQuoteClient] = useState("");
   const [quoteClientAddress, setQuoteClientAddress] = useState("");
+  const [quoteClientSiret, setQuoteClientSiret] = useState("");
   const [quoteClientRef, setQuoteClientRef] = useState("");
   const [quoteAgencyName, setQuoteAgencyName] = useState("Pulsar Agency");
   const [quoteAgencyAddress, setQuoteAgencyAddress] = useState("12 Rue de l'Innovation, 59000 Lille");
