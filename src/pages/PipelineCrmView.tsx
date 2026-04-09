@@ -52,6 +52,7 @@ interface Client {
   entreprise: string | null;
   email: string | null;
   telephone: string | null;
+  siret: string | null;
   statut: string | null;
   created_at: string;
 }
@@ -78,7 +79,7 @@ const PipelineCrmView = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ entreprise: "", email: "", telephone: "", statut: "Prospect" });
+  const [form, setForm] = useState({ entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
   const [deleteTarget, setDeleteTarget] = useState<Client | null>(null);
 
   const fetchClients = async () => {
@@ -108,6 +109,7 @@ const PipelineCrmView = () => {
       entreprise: form.entreprise,
       email: form.email || null,
       telephone: form.telephone || null,
+      siret: form.siret || null,
       statut: form.statut,
       user_id: user.id,
     });
@@ -116,7 +118,7 @@ const PipelineCrmView = () => {
       toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Client ajouté" });
-      setForm({ entreprise: "", email: "", telephone: "", statut: "Prospect" });
+      setForm({ entreprise: "", email: "", telephone: "", siret: "", statut: "Prospect" });
       setDialogOpen(false);
       fetchClients();
     }
@@ -135,7 +137,7 @@ const PipelineCrmView = () => {
   };
 
   const filtered = clients.filter((c) =>
-    [c.entreprise, c.email, c.telephone, c.statut]
+    [c.entreprise, c.email, c.telephone, c.siret, c.statut]
       .filter(Boolean)
       .some((v) => v!.toLowerCase().includes(search.toLowerCase()))
   );
@@ -192,6 +194,15 @@ const PipelineCrmView = () => {
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="siret">Numéro SIRET</Label>
+                <Input
+                  id="siret"
+                  value={form.siret}
+                  onChange={(e) => setForm({ ...form, siret: e.target.value })}
+                  placeholder="123 456 789 00012"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label>Statut</Label>
                 <Select value={form.statut} onValueChange={(v) => setForm({ ...form, statut: v })}>
                   <SelectTrigger>
@@ -230,6 +241,7 @@ const PipelineCrmView = () => {
                 <TableHead>Entreprise</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Téléphone</TableHead>
+                <TableHead>SIRET</TableHead>
                 <TableHead>Statut</TableHead>
                 <TableHead>Date d'ajout</TableHead>
                 <TableHead className="w-10"></TableHead>
@@ -238,13 +250,13 @@ const PipelineCrmView = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Chargement...
                   </TableCell>
                 </TableRow>
               ) : filtered.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                     Aucun client trouvé
                   </TableCell>
                 </TableRow>
@@ -270,6 +282,9 @@ const PipelineCrmView = () => {
                           {c.telephone}
                         </span>
                       ) : "—"}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {c.siret || "—"}
                     </TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statutColor(c.statut)}`}>

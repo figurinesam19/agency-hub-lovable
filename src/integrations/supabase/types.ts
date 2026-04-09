@@ -20,6 +20,7 @@ export type Database = {
           email: string | null
           entreprise: string | null
           id: number
+          siret: string | null
           statut: string | null
           telephone: string | null
           user_id: string | null
@@ -29,6 +30,7 @@ export type Database = {
           email?: string | null
           entreprise?: string | null
           id?: number
+          siret?: string | null
           statut?: string | null
           telephone?: string | null
           user_id?: string | null
@@ -38,6 +40,7 @@ export type Database = {
           email?: string | null
           entreprise?: string | null
           id?: number
+          siret?: string | null
           statut?: string | null
           telephone?: string | null
           user_id?: string | null
