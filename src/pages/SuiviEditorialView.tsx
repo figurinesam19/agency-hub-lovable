@@ -98,7 +98,19 @@ const SuiviEditorialView = () => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [quotePrices, setQuotePrices] = useState<Record<string, string>>({});
+  const [quoteQty, setQuoteQty] = useState<Record<string, string>>({});
+  const [quoteTva, setQuoteTva] = useState<Record<string, string>>({});
   const [quoteClient, setQuoteClient] = useState("");
+  const [quoteClientAddress, setQuoteClientAddress] = useState("");
+  const [quoteClientRef, setQuoteClientRef] = useState("");
+  const [quoteAgencyName, setQuoteAgencyName] = useState("Pulsar Agency");
+  const [quoteAgencyAddress, setQuoteAgencyAddress] = useState("12 Rue de l'Innovation, 59000 Lille");
+  const [quoteAgencySiret, setQuoteAgencySiret] = useState("");
+  const [quoteAgencyEmail, setQuoteAgencyEmail] = useState("");
+  const [quoteAgencyPhone, setQuoteAgencyPhone] = useState("");
+  const [quoteAgencyTva, setQuoteAgencyTva] = useState("");
+  const [quotePayment, setQuotePayment] = useState("Virement bancaire");
+  const [quotePaymentTerms, setQuotePaymentTerms] = useState("30 jours");
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -118,14 +130,34 @@ const SuiviEditorialView = () => {
 
   const openQuoteDialog = () => {
     const prices: Record<string, string> = {};
-    selectedIds.forEach((id) => { prices[id] = ""; });
+    const qty: Record<string, string> = {};
+    const tva: Record<string, string> = {};
+    selectedIds.forEach((id) => { prices[id] = ""; qty[id] = "1"; tva[id] = "20"; });
     setQuotePrices(prices);
+    setQuoteQty(qty);
+    setQuoteTva(tva);
     setQuoteClient("");
+    setQuoteClientAddress("");
+    setQuoteClientRef("");
     setQuoteOpen(true);
   };
 
   const selectedPosts = posts.filter((p) => selectedIds.has(p.id));
-  const quoteTotal = selectedPosts.reduce((sum, p) => sum + (parseFloat(quotePrices[p.id] || "0") || 0), 0);
+
+  const quoteLines = selectedPosts.map((p) => {
+    const qty = parseFloat(quoteQty[p.id] || "1") || 1;
+    const price = parseFloat(quotePrices[p.id] || "0") || 0;
+    const tvaRate = parseFloat(quoteTva[p.id] || "20") || 0;
+    const lineHT = qty * price;
+    const lineTVA = lineHT * (tvaRate / 100);
+    return { post: p, qty, price, tvaRate, lineHT, lineTVA };
+  });
+
+  const quoteTotalHT = quoteLines.reduce((s, l) => s + l.lineHT, 0);
+  const quoteTotalTVA = quoteLines.reduce((s, l) => s + l.lineTVA, 0);
+  const quoteTotalTTC = quoteTotalHT + quoteTotalTVA;
+
+  const quoteNumber = `DEV-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 999) + 1).padStart(3, "0")}`;
 
   const fetchPosts = useCallback(async () => {
     if (!user) return;
