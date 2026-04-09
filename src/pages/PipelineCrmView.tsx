@@ -283,6 +283,9 @@ const PipelineCrmView = () => {
                         </span>
                       ) : "—"}
                     </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {c.siret || "—"}
+                    </TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statutColor(c.statut)}`}>
                         {c.statut || "—"}
