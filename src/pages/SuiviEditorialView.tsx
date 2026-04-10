@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useActiveClient } from "@/hooks/useActiveClient";
 import { toast } from "@/hooks/use-toast";
 
 type Status = "Validé Client" | "À relire" | "Brouillon";
