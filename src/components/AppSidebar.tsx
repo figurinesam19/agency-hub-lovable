@@ -1,4 +1,4 @@
-import { Lightbulb, FileText, CalendarDays, BarChart3, Users, CreditCard, LogOut } from "lucide-react";
+import { Lightbulb, FileText, CalendarDays, BarChart3, Users, CreditCard, LogOut, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -11,7 +11,8 @@ const socialMediaLinks = [
 
 const agenceLinks = [
 { title: "Pipeline CRM", path: "/crm", icon: Users },
-{ title: "Abonnements", path: "/abonnements", icon: CreditCard }];
+{ title: "Abonnements", path: "/abonnements", icon: CreditCard },
+{ title: "Paramètres", path: "/parametres", icon: Settings }];
 
 
 function SidebarLink({ to, icon: Icon, label }: {to: string;icon: React.ElementType;label: string;}) {

@@ -12,6 +12,7 @@ import CalendrierView from "./pages/CalendrierView";
 import AnalyticsView from "./pages/AnalyticsView";
 import PipelineCrmView from "./pages/PipelineCrmView";
 import AbonnementsView from "./pages/AbonnementsView";
+import ParametresView from "./pages/ParametresView";
 import AuthPage from "./pages/AuthPage";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/analytics" element={<AnalyticsView />} />
               <Route path="/crm" element={<PipelineCrmView />} />
               <Route path="/abonnements" element={<AbonnementsView />} />
+              <Route path="/parametres" element={<ParametresView />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
