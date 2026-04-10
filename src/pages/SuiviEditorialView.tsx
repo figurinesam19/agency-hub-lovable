@@ -664,132 +664,140 @@ const SuiviEditorialView = () => {
 
       {/* Quote / Devis Modal */}
       <Dialog open={quoteOpen} onOpenChange={setQuoteOpen}>
-        <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:border-none print:max-h-none">
-          <DialogHeader className="print:hidden">
-            <DialogTitle className="text-xl">Aperçu du Devis</DialogTitle>
+        <DialogContent className="sm:max-w-[850px] max-h-[90vh] overflow-y-auto print:max-w-none print:shadow-none print:border-none print:max-h-none p-8">
+          <DialogHeader className="print:hidden sr-only">
+            <DialogTitle>Aperçu du Devis</DialogTitle>
             <DialogDescription>Personnalisez et exportez votre devis professionnel.</DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-6 py-2" id="quote-content">
-            {/* Header: Agency left, Doc info right */}
-            <div className="flex justify-between items-start gap-6">
-              {/* Left: Agency */}
-              <div className="space-y-1 flex-1">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
-                  <FileText className="h-6 w-6 text-primary" />
+          <div className="space-y-8" id="quote-content">
+            {/* === TOP: Logo+Agency left | DEVIS title+dates right === */}
+            <div className="flex justify-between items-start">
+              {/* Left: Logo + Agency Name */}
+              <div className="flex items-center gap-3">
+                <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center shrink-0">
+                  <FileText className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <Input value={quoteAgencyName} onChange={(e) => setQuoteAgencyName(e.target.value)} className="font-bold text-lg border-none p-0 h-auto shadow-none focus-visible:ring-0 print:text-foreground" placeholder="Nom de l'agence" />
-                <Input value={quoteAgencyAddress} onChange={(e) => setQuoteAgencyAddress(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Adresse" />
+                <Input value={quoteAgencyName} onChange={(e) => setQuoteAgencyName(e.target.value)} className="font-extrabold text-xl border-none p-0 h-auto shadow-none focus-visible:ring-0 uppercase tracking-wide" placeholder="NOM DE L'AGENCE" />
+              </div>
+              {/* Right: DEVIS title + number + dates */}
+              <div className="text-right space-y-0.5">
+                <h2 className="text-3xl font-black tracking-tight text-foreground">DEVIS - {quoteNumber.split("-").slice(1).join("-")}</h2>
+                <p className="text-sm text-muted-foreground">Date de création : {new Date().toLocaleDateString("fr-FR")}</p>
+                <p className="text-sm text-muted-foreground">Échéance : {new Date(Date.now() + 30 * 86400000).toLocaleDateString("fr-FR")}</p>
+              </div>
+            </div>
+
+            {/* === ADDRESS BLOCKS: Agency left | Client right === */}
+            <div className="grid grid-cols-2 gap-8 pt-2">
+              {/* Left: Agency details */}
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-foreground">{quoteAgencyName || "Nom de l'agence"}</p>
+                <Input value={quoteAgencyAddress} onChange={(e) => setQuoteAgencyAddress(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Adresse de l'agence" />
                 <Input value={quoteAgencySiret} onChange={(e) => setQuoteAgencySiret(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="SIRET : ..." />
                 <Input value={quoteAgencyEmail} onChange={(e) => setQuoteAgencyEmail(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="email@agence.com" />
                 <Input value={quoteAgencyPhone} onChange={(e) => setQuoteAgencyPhone(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Téléphone" />
               </div>
-
-              {/* Right: Document info */}
-              <div className="text-right space-y-1 flex-1">
-                <h2 className="text-2xl font-extrabold tracking-tight text-foreground">DEVIS</h2>
-                <p className="text-sm font-semibold text-muted-foreground">{quoteNumber}</p>
-                <p className="text-sm text-muted-foreground">
-                  Date d'émission : {new Date().toLocaleDateString("fr-FR")}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Validité : {new Date(Date.now() + 30 * 86400000).toLocaleDateString("fr-FR")}
-                </p>
+              {/* Right: Client (Destinataire) */}
+              <div className="space-y-1">
+                <p className="text-sm font-bold text-foreground">{quoteClient || "Nom du client"}</p>
+                <Input value={quoteClientAddress} onChange={(e) => setQuoteClientAddress(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Adresse du client" />
+                <Input value={quoteClientEmail} onChange={(e) => setQuoteClientEmail(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground" placeholder="Email du client" />
+                {quoteClientSiret && <p className="text-sm text-muted-foreground">SIRET : {quoteClientSiret}</p>}
               </div>
             </div>
 
-            {/* Client block */}
-            <div className="bg-muted/50 rounded-lg p-4 space-y-3 border border-border">
-              <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Client</p>
-              <Input value={quoteClient} onChange={(e) => setQuoteClient(e.target.value)} placeholder="Nom du client" className="font-semibold border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent" />
-              <Input value={quoteClientEmail} onChange={(e) => setQuoteClientEmail(e.target.value)} placeholder="Email du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
-              <Input value={quoteClientAddress} onChange={(e) => setQuoteClientAddress(e.target.value)} placeholder="Adresse du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
-              <Input value={quoteClientSiret} onChange={(e) => setQuoteClientSiret(e.target.value)} placeholder="SIRET du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Réf. client :</span>
-                <Input value={quoteClientRef} onChange={(e) => setQuoteClientRef(e.target.value)} placeholder="—" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent w-[120px]" />
-              </div>
+            {/* Reference client */}
+            <div className="text-center text-sm text-muted-foreground">
+              Référence client{" "}
+              <Input value={quoteClientRef} onChange={(e) => setQuoteClientRef(e.target.value)} placeholder="—" className="inline-block text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 w-[80px] text-center" />
             </div>
 
-            {/* Items table */}
+            {/* === TABLE === */}
             <div className="border border-border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-primary/5 hover:bg-primary/5">
-                    <TableHead className="text-xs uppercase font-semibold text-foreground">Contenu</TableHead>
-                    <TableHead className="text-xs uppercase font-semibold text-foreground">Format</TableHead>
-                    <TableHead className="text-xs uppercase font-semibold text-foreground">Réseau</TableHead>
-                    <TableHead className="text-xs uppercase font-semibold text-foreground text-center w-[70px]">Qté</TableHead>
-                    <TableHead className="text-xs uppercase font-semibold text-foreground text-right w-[110px]">Prix unit. €</TableHead>
-                    <TableHead className="text-xs uppercase font-semibold text-foreground text-center w-[80px]">TVA %</TableHead>
-                    <TableHead className="text-xs uppercase font-semibold text-foreground text-right w-[100px]">Montant €</TableHead>
+                  <TableRow className="bg-muted/60 hover:bg-muted/60">
+                    <TableHead className="text-xs font-bold text-foreground">Description</TableHead>
+                    <TableHead className="text-xs font-bold text-foreground text-center w-[60px]">Qté</TableHead>
+                    <TableHead className="text-xs font-bold text-foreground text-right w-[120px]">Prix unitaire HT</TableHead>
+                    <TableHead className="text-xs font-bold text-foreground text-center w-[70px]">TVA</TableHead>
+                    <TableHead className="text-xs font-bold text-foreground text-right w-[110px]">Montant HT</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {quoteLines.map((line) => (
                     <TableRow key={line.post.id}>
-                      <TableCell className="font-medium text-sm">{line.post.thematique}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{line.post.format}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">{line.post.reseau}</TableCell>
+                      <TableCell>
+                        <p className="font-medium text-sm text-foreground">{line.post.thematique}</p>
+                        <p className="text-xs text-muted-foreground">{line.post.format} · {line.post.reseau}</p>
+                      </TableCell>
                       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                        <Input type="number" min="1" value={quoteQty[line.post.id] || "1"} onChange={(e) => setQuoteQty({ ...quoteQty, [line.post.id]: e.target.value })} className="w-[55px] mx-auto text-center text-sm print:border-none print:p-0" />
+                        <Input type="number" min="1" value={quoteQty[line.post.id] || "1"} onChange={(e) => setQuoteQty({ ...quoteQty, [line.post.id]: e.target.value })} className="w-[50px] mx-auto text-center text-sm print:border-none print:p-0" />
                       </TableCell>
                       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                        <Input type="number" min="0" step="0.01" value={quotePrices[line.post.id] || ""} onChange={(e) => setQuotePrices({ ...quotePrices, [line.post.id]: e.target.value })} placeholder="0,00" className="w-[90px] ml-auto text-right text-sm print:border-none print:p-0" />
+                        <Input type="number" min="0" step="0.01" value={quotePrices[line.post.id] || ""} onChange={(e) => setQuotePrices({ ...quotePrices, [line.post.id]: e.target.value })} placeholder="0,00" className="w-[100px] ml-auto text-right text-sm print:border-none print:p-0" />
                       </TableCell>
                       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                        <Input type="number" min="0" step="0.5" value={quoteTva[line.post.id] || "20"} onChange={(e) => setQuoteTva({ ...quoteTva, [line.post.id]: e.target.value })} className="w-[60px] mx-auto text-center text-sm print:border-none print:p-0" />
+                        <Input type="number" min="0" step="0.5" value={quoteTva[line.post.id] || "20"} onChange={(e) => setQuoteTva({ ...quoteTva, [line.post.id]: e.target.value })} className="w-[55px] mx-auto text-center text-sm print:border-none print:p-0" />
                       </TableCell>
-                      <TableCell className="text-right font-medium text-sm">{line.lineHT.toFixed(2)} €</TableCell>
+                      <TableCell className="text-right font-semibold text-sm">{line.lineHT.toFixed(2)} €</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
 
-            {/* Totals */}
+            {/* === TOTALS aligned right === */}
             <div className="flex justify-end">
-              <div className="w-[280px] space-y-2 border border-border rounded-lg p-4">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Total HT</span>
-                  <span className="font-medium text-foreground">{quoteTotalHT.toFixed(2)} €</span>
+              <div className="w-[280px] space-y-1">
+                <div className="flex justify-between text-sm py-1">
+                  <span className="font-semibold text-foreground">Total HT</span>
+                  <span className="text-foreground">{quoteTotalHT.toFixed(2)} €</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">TVA</span>
-                  <span className="font-medium text-foreground">{quoteTotalTVA.toFixed(2)} €</span>
+                <div className="flex justify-between text-sm py-1">
+                  <span className="font-semibold text-foreground">TVA 20 %</span>
+                  <span className="text-foreground">{quoteTotalTVA.toFixed(2)} €</span>
                 </div>
-                <div className="border-t border-border pt-2 flex justify-between">
-                  <span className="font-bold text-foreground">Total TTC</span>
-                  <span className="text-xl font-extrabold text-foreground">{quoteTotalTTC.toFixed(2)} €</span>
+                <div className="border-t-2 border-foreground pt-2 flex justify-between items-center">
+                  <span className="font-black text-foreground text-base">Total TTC</span>
+                  <span className="text-2xl font-black text-foreground">{quoteTotalTTC.toFixed(2)} €</span>
                 </div>
               </div>
             </div>
 
-            {/* Payment & Terms */}
-            <div className="grid grid-cols-2 gap-6 border-t border-border pt-4">
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Moyens de paiement</p>
-                <Input value={quotePayment} onChange={(e) => setQuotePayment(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0" placeholder="Virement bancaire" />
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Conditions de paiement</p>
-                <Input value={quotePaymentTerms} onChange={(e) => setQuotePaymentTerms(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0" placeholder="30 jours" />
+            {/* === PAYMENT & CONDITIONS === */}
+            <div className="space-y-3 pt-2">
+              <div className="flex gap-12">
+                <div>
+                  <p className="text-sm font-bold text-foreground">Moyens de paiement :</p>
+                  <Textarea value={quotePayment} onChange={(e) => setQuotePayment(e.target.value)} className="text-sm border-none p-0 shadow-none focus-visible:ring-0 min-h-[60px] resize-none" placeholder={"Banque: ...\nSWIFT/BIC: ...\nIBAN: ...\nPaypal: ..."} />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-bold text-foreground">Conditions de paiement :</p>
+                  <Input value={quotePaymentTerms} onChange={(e) => setQuotePaymentTerms(e.target.value)} className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0" placeholder="30 jours" />
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-foreground">Référence client :</span>
+                    <span className="text-sm text-muted-foreground">{quoteClientRef || "—"}</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Legal footer */}
-            <div className="border-t border-border pt-3 text-center space-y-0.5">
-              <p className="text-[11px] text-muted-foreground font-medium">{quoteAgencyName}</p>
-              <p className="text-[10px] text-muted-foreground">{quoteAgencyAddress}</p>
-              <p className="text-[10px] text-muted-foreground">
+            {/* === LEGAL FOOTER === */}
+            <div className="border-t border-border pt-4 text-center space-y-0.5 mt-4">
+              <p className="text-xs text-muted-foreground font-medium">
+                {quoteAgencyName}{quoteAgencyAddress ? ` — ${quoteAgencyAddress}` : ""}
+              </p>
+              <p className="text-xs text-muted-foreground">
                 {quoteAgencySiret && `SIRET : ${quoteAgencySiret}`}
                 {quoteAgencyTva && ` — N° TVA : ${quoteAgencyTva}`}
               </p>
-              <Input value={quoteAgencyTva} onChange={(e) => setQuoteAgencyTva(e.target.value)} className="text-[10px] text-center border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground print:hidden mx-auto w-[250px]" placeholder="N° TVA intracommunautaire (optionnel)" />
+              <Input value={quoteAgencyTva} onChange={(e) => setQuoteAgencyTva(e.target.value)} className="text-[10px] text-center border-none p-0 h-auto shadow-none focus-visible:ring-0 text-muted-foreground print:hidden mx-auto w-[260px]" placeholder="N° TVA intracommunautaire (optionnel)" />
             </div>
           </div>
 
-          <DialogFooter className="print:hidden">
+          <DialogFooter className="print:hidden pt-4">
             <Button variant="outline" onClick={() => setQuoteOpen(false)}>Fermer</Button>
             <Button onClick={() => window.print()}>
               <Printer className="h-4 w-4 mr-1" /> Imprimer / PDF
