@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronDown, LogOut } from "lucide-react";
 import {
   DropdownMenu,
@@ -7,15 +6,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-
-const clients = ["Alteas", "Vacherand Immobilier", "Notaire Ronchin", "Notaire 20.F"];
+import { useActiveClient } from "@/hooks/useActiveClient";
 
 export function AppHeader() {
-  const [activeClient, setActiveClient] = useState(clients[0]);
   const { user, signOut } = useAuth();
+  const { clients, activeClient, setActiveClientId } = useActiveClient();
 
   const displayName = user?.email?.split("@")[0] ?? "Utilisateur";
   const initials = displayName.slice(0, 2).toUpperCase();
+  const clientName = activeClient?.entreprise || "Aucun client";
 
   return (
     <header className="h-[70px] min-h-[70px] bg-header border-b border-header-border flex items-center justify-between px-6">
@@ -24,26 +23,31 @@ export function AppHeader() {
         <DropdownMenuTrigger asChild>
           <button className="flex items-center gap-2.5 border border-border rounded-full px-4 py-2 hover:bg-secondary transition-colors outline-none">
             <div className="w-7 h-7 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-foreground">
-              {activeClient.charAt(0)}
+              {clientName.charAt(0)}
             </div>
             <div className="leading-tight text-left">
               <span className="text-[11px] text-muted-foreground">Client actif</span>
-              <p className="text-sm font-semibold text-foreground">{activeClient}</p>
+              <p className="text-sm font-semibold text-foreground">{clientName}</p>
             </div>
             <ChevronDown className="h-4 w-4 text-muted-foreground ml-1" />
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-56">
+          {clients.length === 0 && (
+            <DropdownMenuItem disabled className="text-muted-foreground text-sm">
+              Aucun client dans le CRM
+            </DropdownMenuItem>
+          )}
           {clients.map((client) => (
             <DropdownMenuItem
-              key={client}
-              onClick={() => setActiveClient(client)}
-              className={client === activeClient ? "bg-accent font-semibold" : ""}
+              key={client.id}
+              onClick={() => setActiveClientId(client.id)}
+              className={client.id === activeClient?.id ? "bg-accent font-semibold" : ""}
             >
               <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-foreground mr-2">
-                {client.charAt(0)}
+                {(client.entreprise || "?").charAt(0)}
               </div>
-              {client}
+              {client.entreprise || `Client #${client.id}`}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
