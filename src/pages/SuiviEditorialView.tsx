@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useActiveClient } from "@/hooks/useActiveClient";
 import { toast } from "@/hooks/use-toast";
 
 type Status = "Validé Client" | "À relire" | "Brouillon";
@@ -75,6 +76,7 @@ interface Comment {
 
 const SuiviEditorialView = () => {
   const { user } = useAuth();
+  const { activeClient } = useActiveClient();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<"Tous" | Status>("Tous");
@@ -105,8 +107,6 @@ const SuiviEditorialView = () => {
   const [quoteClientAddress, setQuoteClientAddress] = useState("");
   const [quoteClientSiret, setQuoteClientSiret] = useState("");
   const [quoteClientRef, setQuoteClientRef] = useState("");
-  const [quoteSelectedClientId, setQuoteSelectedClientId] = useState<string>("");
-  const [crmClients, setCrmClients] = useState<{ id: number; entreprise: string | null; email: string | null; telephone: string | null; siret: string | null }[]>([]);
   const [quoteAgencyName, setQuoteAgencyName] = useState("Pulsar Agency");
   const [quoteAgencyAddress, setQuoteAgencyAddress] = useState("12 Rue de l'Innovation, 59000 Lille");
   const [quoteAgencySiret, setQuoteAgencySiret] = useState("");
@@ -140,13 +140,11 @@ const SuiviEditorialView = () => {
     setQuotePrices(prices);
     setQuoteQty(qty);
     setQuoteTva(tva);
-    setQuoteClient("");
-    setQuoteClientEmail("");
+    setQuoteClient(activeClient?.entreprise || "");
+    setQuoteClientEmail(activeClient?.email || "");
     setQuoteClientAddress("");
-    setQuoteClientSiret("");
+    setQuoteClientSiret(activeClient?.siret || "");
     setQuoteClientRef("");
-    setQuoteSelectedClientId("");
-    fetchCrmClients();
     setQuoteOpen(true);
   };
 
@@ -205,32 +203,6 @@ const SuiviEditorialView = () => {
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
-  // Fetch CRM clients for quote dropdown
-  const fetchCrmClients = useCallback(async () => {
-    if (!user) return;
-    const { data } = await supabase.from("clients").select("id, entreprise, email, telephone, siret").order("entreprise");
-    setCrmClients(data ?? []);
-  }, [user]);
-
-  useEffect(() => { fetchCrmClients(); }, [fetchCrmClients]);
-
-  const handleSelectClient = (clientId: string) => {
-    setQuoteSelectedClientId(clientId);
-    if (clientId === "__manual__") {
-      setQuoteClient("");
-      setQuoteClientEmail("");
-      setQuoteClientAddress("");
-      setQuoteClientSiret("");
-      return;
-    }
-    const c = crmClients.find((cl) => String(cl.id) === clientId);
-    if (c) {
-      setQuoteClient(c.entreprise || "");
-      setQuoteClientEmail(c.email || "");
-      setQuoteClientSiret(c.siret || "");
-      setQuoteClientAddress("");
-    }
-  };
 
   const filtered = (activeFilter === "Tous" ? posts : posts.filter((p) => p.statut === activeFilter))
     .filter((p) => !searchQuery || p.thematique.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -383,7 +355,12 @@ const SuiviEditorialView = () => {
             <Plus className="h-4 w-4 mr-1" /> Nouveau Contenu
           </Button>
           {selectedIds.size > 0 && (
-            <Button variant="outline" onClick={openQuoteDialog}>
+            <Button
+              variant="outline"
+              onClick={openQuoteDialog}
+              disabled={!activeClient}
+              title={!activeClient ? "Sélectionnez un client dans le menu en haut" : undefined}
+            >
               <Receipt className="h-4 w-4 mr-1" /> Générer Devis ({selectedIds.size})
             </Button>
           )}
@@ -724,17 +701,6 @@ const SuiviEditorialView = () => {
             {/* Client block */}
             <div className="bg-muted/50 rounded-lg p-4 space-y-3 border border-border">
               <p className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">Client</p>
-              <Select value={quoteSelectedClientId} onValueChange={handleSelectClient}>
-                <SelectTrigger className="print:hidden">
-                  <SelectValue placeholder="Sélectionner un client du CRM..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__manual__">✏️ Saisie manuelle</SelectItem>
-                  {crmClients.map((c) => (
-                    <SelectItem key={c.id} value={String(c.id)}>{c.entreprise || `Client #${c.id}`}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
               <Input value={quoteClient} onChange={(e) => setQuoteClient(e.target.value)} placeholder="Nom du client" className="font-semibold border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent" />
               <Input value={quoteClientEmail} onChange={(e) => setQuoteClientEmail(e.target.value)} placeholder="Email du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />
               <Input value={quoteClientAddress} onChange={(e) => setQuoteClientAddress(e.target.value)} placeholder="Adresse du client" className="text-sm border-none p-0 h-auto shadow-none focus-visible:ring-0 bg-transparent text-muted-foreground" />

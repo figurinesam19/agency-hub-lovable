@@ -1,17 +1,20 @@
 import { Outlet } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
+import { ActiveClientProvider } from "@/hooks/useActiveClient";
 
 export function Layout() {
   return (
-    <div className="flex h-screen w-full overflow-hidden">
-      <AppSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <AppHeader />
-        <main className="flex-1 overflow-y-auto bg-background p-6">
-          <Outlet />
-        </main>
+    <ActiveClientProvider>
+      <div className="flex h-screen w-full overflow-hidden">
+        <AppSidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <AppHeader />
+          <main className="flex-1 overflow-y-auto bg-background p-6">
+            <Outlet />
+          </main>
+        </div>
       </div>
-    </div>
+    </ActiveClientProvider>
   );
 }
