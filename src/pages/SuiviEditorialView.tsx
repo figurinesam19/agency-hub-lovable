@@ -76,6 +76,7 @@ interface Comment {
 
 const SuiviEditorialView = () => {
   const { user } = useAuth();
+  const { activeClient } = useActiveClient();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<"Tous" | Status>("Tous");
