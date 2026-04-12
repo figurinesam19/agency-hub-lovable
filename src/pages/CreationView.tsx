@@ -1182,7 +1182,7 @@ export function CreationView() {
     }
   };
 
-
+  const renderPreview = () => {
     switch (selectedNetwork) {
       case "instagram":
         return <InstagramPreview postText={postText} uploadedFile={uploadedFile} />;
