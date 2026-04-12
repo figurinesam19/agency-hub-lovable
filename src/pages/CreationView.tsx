@@ -1154,7 +1154,35 @@ export function CreationView() {
     setUploadedFile(null);
   };
 
-  const renderPreview = () => {
+  const handlePublish = async () => {
+    if (!user) {
+      toast({ title: "Erreur", description: "Vous devez être connecté.", variant: "destructive" });
+      return;
+    }
+    if (selectedNetwork !== "instagram" && selectedNetwork !== "facebook") {
+      toast({ title: "Non supporté", description: "Seules les publications Instagram et Facebook sont prises en charge pour le moment.", variant: "destructive" });
+      return;
+    }
+    setPublishing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("publish-to-meta", {
+        body: {
+          platform: selectedNetwork,
+          message: postText,
+          image_url: uploadedFile || undefined,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Publié !", description: `Votre post a été publié sur ${selectedNetwork === "instagram" ? "Instagram" : "Facebook"}.` });
+    } catch (err: any) {
+      toast({ title: "Erreur de publication", description: err.message || "La publication a échoué.", variant: "destructive" });
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+
     switch (selectedNetwork) {
       case "instagram":
         return <InstagramPreview postText={postText} uploadedFile={uploadedFile} />;
