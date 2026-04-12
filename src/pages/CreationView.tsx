@@ -1096,6 +1096,7 @@ function TikTokPreview({ postText, uploadedFile }: { postText: string; uploadedF
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════
 export function CreationView() {
+  const { user } = useAuth();
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkKey>("instagram");
   const [postText, setPostText] = useState(
     "Decouvrez notre nouvelle gamme de soins 100% naturels ! Des ingredients bio, sources localement, pour une peau eclatante au quotidien.\n\n#GreenLifeBio #Naturel #Skincare",
@@ -1104,6 +1105,7 @@ export function CreationView() {
   const [isDragging, setIsDragging] = useState(false);
   const [scheduledDate, setScheduledDate] = useState("2026-03-15");
   const [scheduledTime, setScheduledTime] = useState("10:00");
+  const [publishing, setPublishing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TikTok-specific state
