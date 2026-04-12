@@ -22,6 +22,7 @@ import {
   ArrowLeft,
   Music,
   Video,
+  Loader2,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -31,6 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -1092,6 +1096,7 @@ function TikTokPreview({ postText, uploadedFile }: { postText: string; uploadedF
 // MAIN COMPONENT
 // ═══════════════════════════════════════════════════════════
 export function CreationView() {
+  const { user } = useAuth();
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkKey>("instagram");
   const [postText, setPostText] = useState(
     "Decouvrez notre nouvelle gamme de soins 100% naturels ! Des ingredients bio, sources localement, pour une peau eclatante au quotidien.\n\n#GreenLifeBio #Naturel #Skincare",
@@ -1100,6 +1105,7 @@ export function CreationView() {
   const [isDragging, setIsDragging] = useState(false);
   const [scheduledDate, setScheduledDate] = useState("2026-03-15");
   const [scheduledTime, setScheduledTime] = useState("10:00");
+  const [publishing, setPublishing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TikTok-specific state
@@ -1146,6 +1152,34 @@ export function CreationView() {
   const handleNetworkChange = (n: NetworkKey) => {
     setSelectedNetwork(n);
     setUploadedFile(null);
+  };
+
+  const handlePublish = async () => {
+    if (!user) {
+      toast({ title: "Erreur", description: "Vous devez être connecté.", variant: "destructive" });
+      return;
+    }
+    if (selectedNetwork !== "instagram" && selectedNetwork !== "facebook") {
+      toast({ title: "Non supporté", description: "Seules les publications Instagram et Facebook sont prises en charge pour le moment.", variant: "destructive" });
+      return;
+    }
+    setPublishing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("publish-to-meta", {
+        body: {
+          platform: selectedNetwork,
+          message: postText,
+          image_url: uploadedFile || undefined,
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast({ title: "Publié !", description: `Votre post a été publié sur ${selectedNetwork === "instagram" ? "Instagram" : "Facebook"}.` });
+    } catch (err: any) {
+      toast({ title: "Erreur de publication", description: err.message || "La publication a échoué.", variant: "destructive" });
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const renderPreview = () => {
@@ -1339,15 +1373,21 @@ export function CreationView() {
                 <span>Programmer</span>
               </button>
               <button
-                className="flex items-center gap-2 rounded-xl px-5 py-[9px] text-white shadow-sm hover:shadow-md transition-all cursor-pointer"
+                onClick={handlePublish}
+                disabled={publishing || (selectedNetwork !== "instagram" && selectedNetwork !== "facebook")}
+                className="flex items-center gap-2 rounded-xl px-5 py-[9px] text-white shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: "linear-gradient(135deg, #1e3a5f, #2d5a8e)",
                   fontSize: "0.84rem",
                   fontWeight: 500,
                 }}
               >
-                <Send className="w-4 h-4" strokeWidth={1.8} />
-                <span>Publier maintenant</span>
+                {publishing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" strokeWidth={1.8} />
+                )}
+                <span>{publishing ? "Publication..." : "Publier maintenant"}</span>
               </button>
             </div>
           </div>
