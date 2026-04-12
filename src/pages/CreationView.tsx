@@ -1373,15 +1373,21 @@ export function CreationView() {
                 <span>Programmer</span>
               </button>
               <button
-                className="flex items-center gap-2 rounded-xl px-5 py-[9px] text-white shadow-sm hover:shadow-md transition-all cursor-pointer"
+                onClick={handlePublish}
+                disabled={publishing || (selectedNetwork !== "instagram" && selectedNetwork !== "facebook")}
+                className="flex items-center gap-2 rounded-xl px-5 py-[9px] text-white shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: "linear-gradient(135deg, #1e3a5f, #2d5a8e)",
                   fontSize: "0.84rem",
                   fontWeight: 500,
                 }}
               >
-                <Send className="w-4 h-4" strokeWidth={1.8} />
-                <span>Publier maintenant</span>
+                {publishing ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" strokeWidth={1.8} />
+                )}
+                <span>{publishing ? "Publication..." : "Publier maintenant"}</span>
               </button>
             </div>
           </div>
