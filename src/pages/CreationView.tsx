@@ -447,7 +447,7 @@ function InstagramPreview({ postText, uploadedFile, pageName }: { postText: stri
             </div>
           </div>
           <span className="text-gray-800" style={{ fontSize: "0.55rem", fontWeight: 500 }}>
-            greenlife
+            {(pageName || "greenlife").slice(0, 10)}
           </span>
         </div>
         {["eco_ma...", "bio_be..."].map((n, i) => (
