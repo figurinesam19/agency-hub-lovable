@@ -380,7 +380,7 @@ function DirectIcon() {
   );
 }
 
-function InstagramPreview({ postText, uploadedFile }: { postText: string; uploadedFile: string | null }) {
+function InstagramPreview({ postText, uploadedFile, pageName }: { postText: string; uploadedFile: string | null; pageName: string }) {
   return (
     <IPhoneShell bgColor="white">
       {/* Instagram Header */}
