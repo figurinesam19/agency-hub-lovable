@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Upload,
   CalendarClock,
@@ -35,6 +35,14 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Facebook, Instagram } from "lucide-react";
+
+interface MetaConnection {
+  platform: string;
+  page_id: string | null;
+  expires_at: string | null;
+}
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
@@ -1114,6 +1122,30 @@ export function CreationView() {
   const [tiktokDuet, setTiktokDuet] = useState(true);
   const [tiktokStitch, setTiktokStitch] = useState(true);
 
+  const [metaConnections, setMetaConnections] = useState<MetaConnection[]>([]);
+
+  // Fetch Meta connections
+  useEffect(() => {
+    if (!user) return;
+    const fetchConnections = async () => {
+      const { data } = await supabase
+        .from("social_connections")
+        .select("platform, page_id, expires_at")
+        .eq("user_id", user.id);
+      setMetaConnections(data || []);
+    };
+    fetchConnections();
+  }, [user]);
+
+  const fbConnection = metaConnections.find(c => c.platform === "facebook");
+  const igConnection = metaConnections.find(c => c.platform === "instagram");
+  const isExpired = (d: string | null) => d ? new Date(d) < new Date() : false;
+  const hasActiveConnection = (platform: string) => {
+    const conn = metaConnections.find(c => c.platform === platform);
+    return conn && !isExpired(conn.expires_at);
+  };
+  const canPublish = selectedNetwork === "instagram" ? hasActiveConnection("instagram") : selectedNetwork === "facebook" ? hasActiveConnection("facebook") : false;
+
   const isTikTok = selectedNetwork === "tiktok";
   const currentNetwork = NETWORKS.find((n) => n.key === selectedNetwork)!;
   const charCount = postText.length;
@@ -1208,6 +1240,29 @@ export function CreationView() {
           <p className="text-gray-400 mt-0.5" style={{ fontSize: "0.82rem" }}>
             Créez et planifiez une publication pour GreenLife Bio
           </p>
+          {/* Meta connection status */}
+          <div className="flex items-center gap-3 mt-3">
+            <div className="flex items-center gap-1.5">
+              <Facebook className="w-4 h-4 text-[#1877F2]" />
+              {fbConnection ? (
+                <Badge variant={isExpired(fbConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
+                  {isExpired(fbConnection.expires_at) ? "Expiré" : `Connecté · ${fbConnection.page_id}`}
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-[10px] text-muted-foreground">Non connecté</Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Instagram className="w-4 h-4 text-[#E1306C]" />
+              {igConnection ? (
+                <Badge variant={isExpired(igConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
+                  {isExpired(igConnection.expires_at) ? "Expiré" : `Connecté · ${igConnection.page_id}`}
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="text-[10px] text-muted-foreground">Non connecté</Badge>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-5">
@@ -1374,7 +1429,7 @@ export function CreationView() {
               </button>
               <button
                 onClick={handlePublish}
-                disabled={publishing || (selectedNetwork !== "instagram" && selectedNetwork !== "facebook")}
+                disabled={publishing || !canPublish}
                 className="flex items-center gap-2 rounded-xl px-5 py-[9px] text-white shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: "linear-gradient(135deg, #1e3a5f, #2d5a8e)",
