@@ -1122,6 +1122,30 @@ export function CreationView() {
   const [tiktokDuet, setTiktokDuet] = useState(true);
   const [tiktokStitch, setTiktokStitch] = useState(true);
 
+  const [metaConnections, setMetaConnections] = useState<MetaConnection[]>([]);
+
+  // Fetch Meta connections
+  useEffect(() => {
+    if (!user) return;
+    const fetchConnections = async () => {
+      const { data } = await supabase
+        .from("social_connections")
+        .select("platform, page_id, expires_at")
+        .eq("user_id", user.id);
+      setMetaConnections(data || []);
+    };
+    fetchConnections();
+  }, [user]);
+
+  const fbConnection = metaConnections.find(c => c.platform === "facebook");
+  const igConnection = metaConnections.find(c => c.platform === "instagram");
+  const isExpired = (d: string | null) => d ? new Date(d) < new Date() : false;
+  const hasActiveConnection = (platform: string) => {
+    const conn = metaConnections.find(c => c.platform === platform);
+    return conn && !isExpired(conn.expires_at);
+  };
+  const canPublish = selectedNetwork === "instagram" ? hasActiveConnection("instagram") : selectedNetwork === "facebook" ? hasActiveConnection("facebook") : false;
+
   const isTikTok = selectedNetwork === "tiktok";
   const currentNetwork = NETWORKS.find((n) => n.key === selectedNetwork)!;
   const charCount = postText.length;
