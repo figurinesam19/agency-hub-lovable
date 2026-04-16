@@ -380,7 +380,7 @@ function DirectIcon() {
   );
 }
 
-function InstagramPreview({ postText, uploadedFile }: { postText: string; uploadedFile: string | null }) {
+function InstagramPreview({ postText, uploadedFile, pageName }: { postText: string; uploadedFile: string | null; pageName: string }) {
   return (
     <IPhoneShell bgColor="white">
       {/* Instagram Header */}
@@ -447,7 +447,7 @@ function InstagramPreview({ postText, uploadedFile }: { postText: string; upload
             </div>
           </div>
           <span className="text-gray-800" style={{ fontSize: "0.55rem", fontWeight: 500 }}>
-            greenlife
+            {(pageName || "greenlife").slice(0, 10)}
           </span>
         </div>
         {["eco_ma...", "bio_be..."].map((n, i) => (
@@ -480,7 +480,7 @@ function InstagramPreview({ postText, uploadedFile }: { postText: string; upload
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <p className="text-[#1c1c1e] truncate" style={{ fontSize: "0.76rem", fontWeight: 600 }}>
-                greenlifebio
+                {pageName || "greenlifebio"}
               </p>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" className="shrink-0">
                 <circle cx="12" cy="12" r="10" fill="#3897f0" />
@@ -494,7 +494,7 @@ function InstagramPreview({ postText, uploadedFile }: { postText: string; upload
               </svg>
             </div>
             <p className="text-gray-400" style={{ fontSize: "0.6rem" }}>
-              GreenLife Bio
+              {pageName || "GreenLife Bio"}
             </p>
           </div>
           <MoreHorizontal className="w-4 h-4 text-[#1c1c1e] shrink-0" />
@@ -523,7 +523,7 @@ function InstagramPreview({ postText, uploadedFile }: { postText: string; upload
         {/* Caption */}
         <div className="px-3.5 pt-1 pb-1.5">
           <p className="text-[#1c1c1e]" style={{ fontSize: "0.72rem", lineHeight: "1.5" }}>
-            <span style={{ fontWeight: 600 }}>greenlifebio </span>
+            <span style={{ fontWeight: 600 }}>{pageName || "greenlifebio"} </span>
             {postText.length > 0
               ? postText.slice(0, 120) + (postText.length > 120 ? "..." : "")
               : "Votre texte apparaîtra ici..."}
@@ -590,7 +590,7 @@ function FbHeartReaction() {
   );
 }
 
-function FacebookPreview({ postText, uploadedFile }: { postText: string; uploadedFile: string | null }) {
+function FacebookPreview({ postText, uploadedFile, pageName }: { postText: string; uploadedFile: string | null; pageName: string }) {
   return (
     <IPhoneShell bgColor="#f0f2f5">
       {/* Facebook Header */}
@@ -658,7 +658,7 @@ function FacebookPreview({ postText, uploadedFile }: { postText: string; uploade
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1">
                 <span className="text-[#050505] truncate" style={{ fontSize: "0.78rem", fontWeight: 600 }}>
-                  GreenLife Bio
+                  {pageName || "GreenLife Bio"}
                 </span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
                   <circle cx="12" cy="12" r="10" fill="#1877F2" />
@@ -1217,9 +1217,9 @@ export function CreationView() {
   const renderPreview = () => {
     switch (selectedNetwork) {
       case "instagram":
-        return <InstagramPreview postText={postText} uploadedFile={uploadedFile} />;
+        return <InstagramPreview postText={postText} uploadedFile={uploadedFile} pageName={igConnection?.page_id || ""} />;
       case "facebook":
-        return <FacebookPreview postText={postText} uploadedFile={uploadedFile} />;
+        return <FacebookPreview postText={postText} uploadedFile={uploadedFile} pageName={fbConnection?.page_id || ""} />;
       case "x":
         return <XPreview postText={postText} uploadedFile={uploadedFile} />;
       case "linkedin":
@@ -1245,8 +1245,8 @@ export function CreationView() {
             <div className="flex items-center gap-1.5">
               <Facebook className="w-4 h-4 text-[#1877F2]" />
               {fbConnection ? (
-                <Badge variant={isExpired(fbConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
-                  {isExpired(fbConnection.expires_at) ? "Expiré" : `Connecté · ${fbConnection.page_id}`}
+               <Badge variant={isExpired(fbConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
+                  {isExpired(fbConnection.expires_at) ? "Expiré" : `Connecté${fbConnection.page_id ? ` · ${fbConnection.page_id}` : ""}`}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="text-[10px] text-muted-foreground">Non connecté</Badge>
@@ -1256,7 +1256,7 @@ export function CreationView() {
               <Instagram className="w-4 h-4 text-[#E1306C]" />
               {igConnection ? (
                 <Badge variant={isExpired(igConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
-                  {isExpired(igConnection.expires_at) ? "Expiré" : `Connecté · ${igConnection.page_id}`}
+                  {isExpired(igConnection.expires_at) ? "Expiré" : `Connecté${igConnection.page_id ? ` · ${igConnection.page_id}` : ""}`}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="text-[10px] text-muted-foreground">Non connecté</Badge>
