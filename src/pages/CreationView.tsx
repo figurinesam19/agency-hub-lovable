@@ -1246,7 +1246,11 @@ export function CreationView() {
               <Facebook className="w-4 h-4 text-[#1877F2]" />
               {fbConnection ? (
                <Badge variant={isExpired(fbConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
-                  {isExpired(fbConnection.expires_at) ? "Expiré" : `Connecté${fbConnection.page_id ? ` · ${fbConnection.page_id}` : ""}`}
+                  {isExpired(fbConnection.expires_at)
+                    ? "Expiré"
+                    : fbConnection.page_id
+                      ? `Page ${fbConnection.page_id}`
+                      : "Connecté (aucune page)"}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="text-[10px] text-muted-foreground">Non connecté</Badge>
@@ -1256,7 +1260,11 @@ export function CreationView() {
               <Instagram className="w-4 h-4 text-[#E1306C]" />
               {igConnection ? (
                 <Badge variant={isExpired(igConnection.expires_at) ? "destructive" : "default"} className="text-[10px]">
-                  {isExpired(igConnection.expires_at) ? "Expiré" : `Connecté${igConnection.page_id ? ` · ${igConnection.page_id}` : ""}`}
+                  {isExpired(igConnection.expires_at)
+                    ? "Expiré"
+                    : igConnection.page_id
+                      ? `IG ${igConnection.page_id}`
+                      : "Connecté"}
                 </Badge>
               ) : (
                 <Badge variant="outline" className="text-[10px] text-muted-foreground">Non connecté</Badge>
