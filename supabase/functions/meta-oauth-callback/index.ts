@@ -63,14 +63,19 @@ Deno.serve(async (req) => {
 
     const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
-    // Save Facebook connection
-    await supabase.from("social_connections").upsert({
-      user_id: userId,
-      platform: "facebook",
-      access_token: accessToken,
-      page_id: pagesData.data?.[0]?.id || null,
-      expires_at: expiresAt,
-    }, { onConflict: "user_id,platform" });
+    // Save Facebook connection (only if a page is available)
+    const fbPageId = pagesData.data?.[0]?.id || null;
+    if (fbPageId) {
+      await supabase.from("social_connections").upsert({
+        user_id: userId,
+        platform: "facebook",
+        access_token: accessToken,
+        page_id: fbPageId,
+        expires_at: expiresAt,
+      }, { onConflict: "user_id,platform" });
+    } else {
+      console.warn("No Facebook page returned by Meta. Check pages_show_list scope and page admin rights.");
+    }
 
     // If user has Instagram linked to a page, save that too
     if (pagesData.data?.length > 0) {
