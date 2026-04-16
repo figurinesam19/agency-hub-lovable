@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Upload,
   CalendarClock,
@@ -35,6 +35,14 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Facebook, Instagram } from "lucide-react";
+
+interface MetaConnection {
+  platform: string;
+  page_id: string | null;
+  expires_at: string | null;
+}
 
 // ═══════════════════════════════════════════════════════════
 // TYPES
