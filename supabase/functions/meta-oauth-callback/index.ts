@@ -12,23 +12,26 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+  const appUrl = Deno.env.get("SITE_URL") || "https://id-preview--0fd004a2-f25d-4893-bc99-5bccf4a3c51f.lovable.app";
+
   try {
     const META_APP_SECRET = Deno.env.get("META_APP_SECRET");
     if (!META_APP_SECRET) {
       throw new Error("META_APP_SECRET is not configured");
     }
 
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
     const url = new URL(req.url);
     const code = url.searchParams.get("code");
     const userId = url.searchParams.get("state");
 
+    console.log("[meta-oauth-callback] incoming", { hasCode: !!code, userId });
+
     if (!code || !userId) {
-      // Redirect URI for the frontend
       const redirectUri = `${SUPABASE_URL}/functions/v1/meta-oauth-callback`;
-      const scopes = "instagram_basic,instagram_content_publish,pages_read_engagement,pages_manage_posts";
+      const scopes = "instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement,pages_manage_posts";
       const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scopes}&state=${url.searchParams.get("user_id") || ""}&response_type=code`;
 
       return new Response(JSON.stringify({ auth_url: authUrl }), {
@@ -36,71 +39,77 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Exchange code for short-lived token
+    // Exchange code → short-lived token
     const redirectUri = `${SUPABASE_URL}/functions/v1/meta-oauth-callback`;
     const tokenUrl = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${META_APP_SECRET}&code=${code}`;
 
     const tokenRes = await fetch(tokenUrl);
     const tokenData = await tokenRes.json();
+    console.log("[meta-oauth-callback] tokenData", JSON.stringify(tokenData));
 
     if (tokenData.error) {
       throw new Error(tokenData.error.message || "Failed to exchange code for token");
     }
 
-    // Exchange for long-lived token
+    // Long-lived token
     const longLivedUrl = `https://graph.facebook.com/v21.0/oauth/access_token?grant_type=fb_exchange_token&client_id=${META_APP_ID}&client_secret=${META_APP_SECRET}&fb_exchange_token=${tokenData.access_token}`;
     const longLivedRes = await fetch(longLivedUrl);
     const longLivedData = await longLivedRes.json();
+    console.log("[meta-oauth-callback] longLivedData", JSON.stringify(longLivedData));
 
-    const accessToken = longLivedData.access_token || tokenData.access_token;
-    const expiresIn = longLivedData.expires_in || 5184000; // 60 days default
+    const userAccessToken = longLivedData.access_token || tokenData.access_token;
+    const expiresIn = longLivedData.expires_in || 5184000;
+    const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
-    // Get Facebook pages
-    const pagesRes = await fetch(`https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}`);
+    // Fetch pages
+    const pagesRes = await fetch(`https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${userAccessToken}`);
     const pagesData = await pagesRes.json();
+    console.log("[meta-oauth-callback] pagesData", JSON.stringify(pagesData));
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
+    const pages = Array.isArray(pagesData?.data) ? pagesData.data : [];
+    // Prefer a page that has Instagram linked, otherwise first page
+    const page = pages.find((p: any) => p?.instagram_business_account?.id) || pages[0] || null;
 
-    // Save Facebook connection (only if a page is available)
-    const fbPageId = pagesData.data?.[0]?.id || null;
-    if (fbPageId) {
-      await supabase.from("social_connections").upsert({
+    // Always save Facebook connection — use page token if a page exists, else user token
+    const fbAccessToken = page?.access_token || userAccessToken;
+    const fbPageId = page?.id || null;
+
+    const { error: fbErr } = await supabase.from("social_connections").upsert({
+      user_id: userId,
+      platform: "facebook",
+      access_token: fbAccessToken,
+      page_id: fbPageId,
+      expires_at: expiresAt,
+    }, { onConflict: "user_id,platform" });
+    if (fbErr) console.error("[meta-oauth-callback] FB upsert error", fbErr);
+    else console.log("[meta-oauth-callback] FB connection saved", { fbPageId });
+
+    if (!page) {
+      console.warn("[meta-oauth-callback] No Facebook page returned. Check pages_show_list scope and that the user is admin of at least one page.");
+    }
+
+    // Instagram (linked to the chosen page)
+    const igId = page?.instagram_business_account?.id || null;
+    if (igId && page?.access_token) {
+      const { error: igErr } = await supabase.from("social_connections").upsert({
         user_id: userId,
-        platform: "facebook",
-        access_token: accessToken,
-        page_id: fbPageId,
+        platform: "instagram",
+        access_token: page.access_token,
+        page_id: igId,
         expires_at: expiresAt,
       }, { onConflict: "user_id,platform" });
+      if (igErr) console.error("[meta-oauth-callback] IG upsert error", igErr);
+      else console.log("[meta-oauth-callback] IG connection saved", { igId });
     } else {
-      console.warn("No Facebook page returned by Meta. Check pages_show_list scope and page admin rights.");
+      console.log("[meta-oauth-callback] No Instagram business account linked to page");
     }
 
-    // If user has Instagram linked to a page, save that too
-    if (pagesData.data?.length > 0) {
-      const pageToken = pagesData.data[0].access_token;
-      const igRes = await fetch(`https://graph.facebook.com/v21.0/${pagesData.data[0].id}?fields=instagram_business_account&access_token=${pageToken}`);
-      const igData = await igRes.json();
-
-      if (igData.instagram_business_account?.id) {
-        await supabase.from("social_connections").upsert({
-          user_id: userId,
-          platform: "instagram",
-          access_token: pageToken,
-          page_id: igData.instagram_business_account.id,
-          expires_at: expiresAt,
-        }, { onConflict: "user_id,platform" });
-      }
-    }
-
-    // Redirect back to app settings page
-    const appUrl = Deno.env.get("SITE_URL") || "https://id-preview--0fd004a2-f25d-4893-bc99-5bccf4a3c51f.lovable.app";
     return Response.redirect(`${appUrl}/parametres?meta=success`, 302);
 
   } catch (error) {
-    console.error("Meta OAuth error:", error);
-    const appUrl = Deno.env.get("SITE_URL") || "https://id-preview--0fd004a2-f25d-4893-bc99-5bccf4a3c51f.lovable.app";
+    console.error("[meta-oauth-callback] error:", error);
     return Response.redirect(`${appUrl}/parametres?meta=error`, 302);
   }
 });
