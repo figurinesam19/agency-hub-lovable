@@ -124,13 +124,19 @@ Deno.serve(async (req) => {
 
     const facebookPageId = selectedPage?.id || null;
     const instagramBusinessId = selectedPage?.instagram_business_account?.id || null;
-    const facebookAccessToken = selectedPage?.access_token || userAccessToken;
 
     console.log("[meta-oauth-callback] selected account", JSON.stringify({
       facebookPageId,
       instagramBusinessId,
       hasPageToken: Boolean(selectedPage?.access_token),
     }));
+
+    if (!facebookPageId) {
+      console.warn("[meta-oauth-callback] Missing facebookPageId from Meta response; skipping all upserts to avoid false positive connection state");
+      return redirectToApp(appUrl, "error");
+    }
+
+    const facebookAccessToken = selectedPage?.access_token || userAccessToken;
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 

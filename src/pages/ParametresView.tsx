@@ -54,7 +54,9 @@ export default function ParametresView() {
     // auth_type=rerequest force Meta à réafficher le dialog des permissions même si déjà accordées
     // display=popup + extras force le sélecteur de pages (sinon Meta peut ne renvoyer aucune page)
     const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(SCOPES)}&state=${user.id}&response_type=code&auth_type=rerequest&display=page`;
-    console.log("[Meta OAuth] Redirecting to:", authUrl);
+    const resolvedScope = new URL(authUrl).searchParams.get("scope") ?? "";
+    console.log("[Meta OAuth] URL exacte générée:", authUrl);
+    console.log("[Meta OAuth] scope transmis à Meta:", decodeURIComponent(resolvedScope));
     window.location.href = authUrl;
   };
 
