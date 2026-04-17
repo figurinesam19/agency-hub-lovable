@@ -51,7 +51,10 @@ export default function ParametresView() {
     if (!user) return;
     setConnecting(true);
     const redirectUri = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/meta-oauth-callback`;
-    const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${SCOPES}&state=${user.id}&response_type=code`;
+    // auth_type=rerequest force Meta à réafficher le dialog des permissions même si déjà accordées
+    // display=popup + extras force le sélecteur de pages (sinon Meta peut ne renvoyer aucune page)
+    const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(SCOPES)}&state=${user.id}&response_type=code&auth_type=rerequest&display=page`;
+    console.log("[Meta OAuth] Redirecting to:", authUrl);
     window.location.href = authUrl;
   };
 
