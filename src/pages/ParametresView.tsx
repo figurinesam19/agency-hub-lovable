@@ -9,7 +9,7 @@ import { Link2, Unlink, Facebook, Instagram, Loader2 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 
 const META_APP_ID = "1456904832097817";
-const SCOPES = "instagram_basic,instagram_content_publish,pages_read_engagement,pages_manage_posts";
+const SCOPES = "instagram_basic,instagram_content_publish,pages_show_list,pages_read_engagement,pages_manage_posts";
 
 interface SocialConnection {
   id: string;
