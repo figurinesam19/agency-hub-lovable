@@ -61,16 +61,47 @@ Deno.serve(async (req) => {
     const expiresIn = longLivedData.expires_in || 5184000;
     const expiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
-    // Fetch pages
-    const pagesRes = await fetch(`https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account&access_token=${userAccessToken}`);
+    // Fetch pages (with IG business account field)
+    const pagesRes = await fetch(`https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,instagram_business_account{id,username,name,profile_picture_url}&access_token=${userAccessToken}`);
     const pagesData = await pagesRes.json();
-    console.log("[meta-oauth-callback] pagesData", JSON.stringify(pagesData));
+    console.log("[meta-oauth-callback] pagesData (raw)", JSON.stringify(pagesData));
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const pages = Array.isArray(pagesData?.data) ? pagesData.data : [];
+    console.log(`[meta-oauth-callback] pages count: ${pages.length}`);
+    pages.forEach((p: any, i: number) => {
+      console.log(`[meta-oauth-callback] page[${i}]`, JSON.stringify({
+        id: p?.id,
+        name: p?.name,
+        has_token: !!p?.access_token,
+        instagram_business_account: p?.instagram_business_account || null,
+      }));
+    });
+
+    // Fallback: if no page in the list has IG inline, query each page individually with its own token
+    for (const p of pages) {
+      if (!p?.instagram_business_account?.id && p?.access_token && p?.id) {
+        try {
+          const igProbeRes = await fetch(`https://graph.facebook.com/v21.0/${p.id}?fields=instagram_business_account{id,username,name,profile_picture_url}&access_token=${p.access_token}`);
+          const igProbe = await igProbeRes.json();
+          console.log(`[meta-oauth-callback] IG probe for page ${p.id}`, JSON.stringify(igProbe));
+          if (igProbe?.instagram_business_account?.id) {
+            p.instagram_business_account = igProbe.instagram_business_account;
+          }
+        } catch (e) {
+          console.error(`[meta-oauth-callback] IG probe error for page ${p.id}`, e);
+        }
+      }
+    }
+
     // Prefer a page that has Instagram linked, otherwise first page
     const page = pages.find((p: any) => p?.instagram_business_account?.id) || pages[0] || null;
+    console.log("[meta-oauth-callback] selected page", JSON.stringify({
+      id: page?.id,
+      name: page?.name,
+      ig: page?.instagram_business_account || null,
+    }));
 
     // Always save Facebook connection — use page token if a page exists, else user token
     const fbAccessToken = page?.access_token || userAccessToken;
