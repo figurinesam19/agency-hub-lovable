@@ -51,7 +51,10 @@ export default function ParametresView() {
     if (!user) return;
     setConnecting(true);
     const redirectUri = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/meta-oauth-callback`;
-    const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${SCOPES}&state=${user.id}&response_type=code`;
+    // auth_type=rerequest force Meta à réafficher le dialog des permissions même si déjà accordées
+    // display=popup + extras force le sélecteur de pages (sinon Meta peut ne renvoyer aucune page)
+    const authUrl = `https://www.facebook.com/v21.0/dialog/oauth?client_id=${META_APP_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(SCOPES)}&state=${user.id}&response_type=code&auth_type=rerequest&display=page`;
+    console.log("[Meta OAuth] Redirecting to:", authUrl);
     window.location.href = authUrl;
   };
 
@@ -156,6 +159,11 @@ export default function ParametresView() {
                 )}
                 {fbConn ? "Reconnecter mon agence à Meta" : "Connecter mon agence à Meta"}
               </Button>
+
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-xs text-foreground/90">
+                <p className="font-semibold text-destructive mb-1">⚠️ Étape critique sur l'écran Meta</p>
+                <p>Quand Meta vous demande quoi autoriser, cliquez sur <strong>« Modifier les paramètres »</strong> / <strong>« Choisir ce que vous autorisez »</strong>, puis <strong>cochez explicitement votre Page Facebook</strong> et laissez TOUTES les permissions activées. Sans cela, Meta ne transmet aucune page (cause du <code>pages count: 0</code>) et Instagram reste introuvable.</p>
+              </div>
 
               <p className="text-xs text-muted-foreground text-center">
                 Permissions demandées : <code className="text-[10px]">instagram_basic</code>, <code className="text-[10px]">instagram_content_publish</code>, <code className="text-[10px]">pages_show_list</code>, <code className="text-[10px]">pages_read_engagement</code>, <code className="text-[10px]">pages_manage_posts</code>
