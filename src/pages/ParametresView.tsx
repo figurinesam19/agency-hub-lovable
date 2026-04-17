@@ -160,8 +160,8 @@ export default function ParametresView() {
                 {fbConn ? "Reconnecter mon agence à Meta" : "Connecter mon agence à Meta"}
               </Button>
 
-              <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-3 text-xs text-foreground/90">
-                <p className="font-semibold text-yellow-600 dark:text-yellow-500 mb-1">⚠️ Étape critique sur l'écran Meta</p>
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-xs text-foreground/90">
+                <p className="font-semibold text-destructive mb-1">⚠️ Étape critique sur l'écran Meta</p>
                 <p>Quand Meta vous demande quoi autoriser, cliquez sur <strong>« Modifier les paramètres »</strong> / <strong>« Choisir ce que vous autorisez »</strong>, puis <strong>cochez explicitement votre Page Facebook</strong> et laissez TOUTES les permissions activées. Sans cela, Meta ne transmet aucune page (cause du <code>pages count: 0</code>) et Instagram reste introuvable.</p>
               </div>
 
