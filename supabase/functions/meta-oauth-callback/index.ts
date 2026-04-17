@@ -97,8 +97,31 @@ Deno.serve(async (req) => {
     const pages: MetaPage[] = Array.isArray(pagesData?.data) ? pagesData.data : [];
     console.log(`[meta-oauth-callback] pages count: ${pages.length}`);
 
-    const pageWithInstagram = pages.find((page) => page?.instagram_business_account?.id);
-    const selectedPage = pageWithInstagram || pages[0] || null;
+    if (pages.length === 0) {
+      console.warn("[meta-oauth-callback] /me/accounts returned an EMPTY list. Likely causes: (1) the user did not tick any Page in the OAuth consent dialog, (2) the 'pages_show_list' permission was not granted/approved on the Meta app, or (3) the user has no Facebook Page admin role.");
+    }
+
+    let selectedPage: MetaPage | null = pages.find((page) => page?.instagram_business_account?.id) || pages[0] || null;
+
+    // Fallback ciblé : si une page est sélectionnée mais sans IG, on interroge directement la page avec son page token
+    if (selectedPage && !selectedPage.instagram_business_account?.id && selectedPage.id && selectedPage.access_token) {
+      try {
+        const probeUrl = `https://graph.facebook.com/v21.0/${selectedPage.id}?fields=instagram_business_account{id,username,name,profile_picture_url}&access_token=${encodeURIComponent(selectedPage.access_token)}`;
+        const probeRes = await fetch(probeUrl);
+        const probeText = await probeRes.text();
+        console.log(`[meta-oauth-callback] IG probe status ${probeRes.status} raw`, probeText);
+        const probeData = probeText ? JSON.parse(probeText) : null;
+        if (probeData?.instagram_business_account?.id) {
+          selectedPage = { ...selectedPage, instagram_business_account: probeData.instagram_business_account };
+          console.log("[meta-oauth-callback] IG probe SUCCESS", JSON.stringify(probeData.instagram_business_account));
+        } else {
+          console.warn("[meta-oauth-callback] IG probe returned no instagram_business_account");
+        }
+      } catch (probeError) {
+        console.error("[meta-oauth-callback] IG probe failed (non-fatal)", String(probeError));
+      }
+    }
+
     const facebookPageId = selectedPage?.id || null;
     const instagramBusinessId = selectedPage?.instagram_business_account?.id || null;
     const facebookAccessToken = selectedPage?.access_token || userAccessToken;
