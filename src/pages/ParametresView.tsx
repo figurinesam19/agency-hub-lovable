@@ -158,7 +158,7 @@ export default function ParametresView() {
               </Button>
 
               <p className="text-xs text-muted-foreground text-center">
-                Permissions demandées : <code className="text-[10px]">instagram_basic</code>, <code className="text-[10px]">instagram_content_publish</code>, <code className="text-[10px]">pages_read_engagement</code>, <code className="text-[10px]">pages_manage_posts</code>
+                Permissions demandées : <code className="text-[10px]">instagram_basic</code>, <code className="text-[10px]">instagram_content_publish</code>, <code className="text-[10px]">pages_show_list</code>, <code className="text-[10px]">pages_read_engagement</code>, <code className="text-[10px]">pages_manage_posts</code>
               </p>
             </>
           )}
